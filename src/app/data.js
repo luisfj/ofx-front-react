@@ -1,0 +1,60 @@
+const columns = [
+    {name: "ID", uid: "id"},
+    {name: "REF", uid: "refNum"},
+    {name: "DESCRIÇÃO", uid: "memo"},
+    {name: "UE", uid: "nomeUe"},
+    {name: "CONTA", uid: "nomeConta"},
+    {name: "DATA", uid: "dataHora"},
+    {name: "TIPO", uid: "tipo"},
+    {name: "VALOR", uid: "valor"},
+  ];
+
+export const operacoes = [
+    {
+        "id": 484,
+        "idUser": 1,
+        "idUe": 1,
+        "nomeUe": "Ue teste",
+        "idConta": null,
+        "nomeConta": null,
+        "nrConta": null,
+        "banco": null,
+        "corConta": null,
+        "idImportacao": null,
+        "tipo": "DEBIT",
+        "dataHora": "02/05/2024 00:00:00",
+        "valor": -1104.00,
+        "fitId": "PIX BAR",
+        "refNum": "PIX BAR",
+        "memo": "PIX BAR",
+        "status": "IMPORTADO",
+        "ordem": 1,
+        "idGrupo": null,
+        "filhos": [
+            {
+                "id": 485,
+                "idUser": 1,
+                "idUe": 1,
+                "nomeUe": "Ue teste",
+                "idConta": null,
+                "nomeConta": null,
+                "nrConta": null,
+                "banco": null,
+                "corConta": null,
+                "idImportacao": null,
+                "tipo": "DEBIT",
+                "dataHora": "02/05/2024 15:25:00",
+                "valor": -1104.00,
+                "fitId": "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ-1",
+                "refNum": "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ",
+                "memo": "PAGAMENTO PIX",
+                "status": "IMPORTADO",
+                "ordem": 1,
+                "idGrupo": 484,
+                "filhos": [],
+                "tipoAlteracao": null
+            }
+        ],
+        "tipoAlteracao": null
+    },
+];
