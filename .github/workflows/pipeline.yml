@@ -42,4 +42,4 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          cd /srv;docker stop ofx-front;docker rm ofx-front;docker rmi luisfj/ofx-front;docker pull luisfj/ofx-front:latest;docker run -d -m 300m --network prodnet --name ofx-front luisfj/ofx-front
+          cd /srv;docker stop ofx-front;docker rm ofx-front;docker rmi luisfj/ofx-front;docker pull luisfj/ofx-front:latest;docker run -d -m 300m --network prodnet --name ofx-front -p 3000:3000 luisfj/ofx-front
