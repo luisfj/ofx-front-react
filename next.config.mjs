@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // basePath: '/csu',
+    basePath: '/csu',
     assetPrefix: '/assets-csu/',
     output: "standalone"
 };
