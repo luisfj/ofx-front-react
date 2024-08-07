@@ -1,4 +1,4 @@
-export const baseUrl = process.env.NODE_ENV === 'production' ? 'https://luisjohann.dev/ofx-api' : 'http://ofx-gateway:8080/api';
+export const baseUrl = process.env.NODE_ENV === 'production' ? 'https://luisjohann.dev/ofx-api' : 'http://localhost:8080/api';
 
 export const fetcher = (url: string) => fetch(baseUrl + url,
     {
