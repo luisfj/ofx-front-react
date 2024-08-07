@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
+
+const isProduction = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
-    basePath: '/csu',
-    assetPrefix: '/assets-csu/',
+    basePath: isProduction ? '/csu' : '',
+    assetPrefix: isProduction ? '/assets-csu/' : '',
     output: "standalone"
 };
 
