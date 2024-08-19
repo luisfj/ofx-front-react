@@ -1,7 +1,7 @@
 import { CreateGrupoType } from "@/types/createGrupoType";
 import { OperationTableType } from "@/types/operationTableType";
 import useSWR from "swr";
-import { deleteFetcher, fetcher, getFetcher, postFetcher, putFetcher } from "./baseApi";
+import { deleteFetcher, fetcher, AUTH_FETCHER, postFetcher, putFetcher } from "./baseApi";
 
 function useGruposList(idUser: number, idUe: number) {
   const { data, error, isLoading } = useSWR<OperationTableType[]>(
@@ -17,7 +17,7 @@ function useGruposList(idUser: number, idUe: number) {
 }
 
 const apiGruposListarTodosComOperacoes = async (idUser: number, idUe: number): Promise<OperationTableType[]> => {
-  const response = await getFetcher(`/v1/data/grupo/${idUser}/${idUe}`);
+  const response = await AUTH_FETCHER(`/v1/data/grupo/${idUser}/${idUe}`);
   const json = await response.json() as Promise<OperationTableType[]>;
   return json;
 }

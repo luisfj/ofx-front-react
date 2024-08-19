@@ -5,7 +5,7 @@
   "author": "Luis Johann <luisfj_pr@hotmail.com>",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -33,10 +33,12 @@
     "@tanstack/react-table": "^8.19.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cookie": "^0.6.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.2.13",
     "lucide-react": "^0.399.0",
     "next": "14.2.4",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-currency-input-field": "^3.8.0",
