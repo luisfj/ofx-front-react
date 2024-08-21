@@ -4,6 +4,7 @@ import { OperationTableType } from "@/types/operationTableType";
 import { useContext, useEffect, useState } from "react";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableGrupos from "./tableGrupos";
+import { fetchFromApi } from "@/api/callApi";
 
 export default function ListarGrupos() {
   const { lastUpdateGrupos } = useContext(ProcessarDadosChangeContext);
@@ -14,10 +15,8 @@ export default function ListarGrupos() {
 
   async function refreshData() {
     setIsLoading(true);
-    const resp = await apiGruposListarTodosComOperacoes(
-      userSelected!.id,
-      ueSelected!.id
-    );
+    
+    const resp = await fetchFromApi(`/v1/data/grupo/${userSelected!.id}/${ueSelected!.id}`);
     setData(resp);
     setIsLoading(false);
   }

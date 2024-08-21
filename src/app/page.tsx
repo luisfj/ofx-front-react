@@ -1,191 +1,22 @@
 "use client";
 
 import { HomeIcon } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Home() {
-  // const links: OperationTableType[] = [
-  //   {
-  //     id: 484,
-  //     idUser: 1,
-  //     idUe: 1,
-  //     nomeUe: "Ue teste",
-  //     idConta: null,
-  //     nomeConta: null,
-  //     nrConta: null,
-  //     banco: null,
-  //     corConta: null,
-  //     idImportacao: null,
-  //     tipo: "DEBIT",
-  //     dataHora: "02/05/2024 00:00:00",
-  //     valor: -1104.0,
-  //     fitId: "PIX BAR",
-  //     refNum: "PIX BAR",
-  //     memo: "PIX BAR",
-  //     status: "IMPORTADO",
-  //     ordem: 1,
-  //     idGrupo: null,
-  //     filhos: [
-  //       {
-  //         id: 485,
-  //         idUser: 1,
-  //         idUe: 1,
-  //         nomeUe: "Ue teste",
-  //         idConta: null,
-  //         nomeConta: null,
-  //         nrConta: null,
-  //         banco: null,
-  //         corConta: null,
-  //         idImportacao: null,
-  //         tipo: "DEBIT",
-  //         dataHora: "02/05/2024 15:25:00",
-  //         valor: -1104.0,
-  //         fitId: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ-1",
-  //         refNum: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ",
-  //         memo: "PAGAMENTO PIX",
-  //         status: "IMPORTADO",
-  //         ordem: 1,
-  //         idGrupo: 484,
-  //         filhos: [],
-  //         tipoAlteracao: null,
-  //       },
-  //     ],
-  //     tipoAlteracao: null,
-  //   },
-  //   {
-  //     id: 300,
-  //     idUser: 1,
-  //     idUe: 1,
-  //     nomeUe: "Ue teste",
-  //     idConta: null,
-  //     nomeConta: null,
-  //     nrConta: null,
-  //     banco: null,
-  //     corConta: null,
-  //     idImportacao: null,
-  //     tipo: "DEBIT",
-  //     dataHora: "02/05/2024 00:00:00",
-  //     valor: -1104.0,
-  //     fitId: "PIX BAR",
-  //     refNum: "PIX BAR",
-  //     memo: "PIX BAR",
-  //     status: "IMPORTADO",
-  //     ordem: 1,
-  //     idGrupo: null,
-  //     filhos: [],
-  //     tipoAlteracao: null,
-  //   },
-  //   {
-  //     id: 301,
-  //     idUser: 1,
-  //     idUe: 1,
-  //     nomeUe: "Ue teste",
-  //     idConta: null,
-  //     nomeConta: null,
-  //     nrConta: null,
-  //     banco: null,
-  //     corConta: null,
-  //     idImportacao: null,
-  //     tipo: "DEBIT",
-  //     dataHora: "02/05/2024 00:00:00",
-  //     valor: -1104.0,
-  //     fitId: "PIX BAR",
-  //     refNum: "PIX BAR",
-  //     memo: "PIX BAR",
-  //     status: "IMPORTADO",
-  //     ordem: 1,
-  //     idGrupo: null,
-  //     filhos: [],
-  //     tipoAlteracao: null,
-  //   },
-  //   {
-  //     id: 2,
-  //     idUser: 1,
-  //     idUe: 1,
-  //     nomeUe: "Ue teste 2",
-  //     idConta: null,
-  //     nomeConta: null,
-  //     nrConta: null,
-  //     banco: null,
-  //     corConta: null,
-  //     idImportacao: null,
-  //     tipo: "CREDIT",
-  //     dataHora: "02/05/2024 00:00:00",
-  //     valor: 5000.0,
-  //     fitId: "ENTRADA TESTE",
-  //     refNum: "ENTRADA TESTE",
-  //     memo: "ENTRADA TESTE",
-  //     status: "IMPORTADO",
-  //     ordem: 1,
-  //     idGrupo: null,
-  //     filhos: [
-  //       {
-  //         id: 22,
-  //         idUser: 1,
-  //         idUe: 1,
-  //         nomeUe: "Ue teste 2",
-  //         idConta: null,
-  //         nomeConta: null,
-  //         nrConta: null,
-  //         banco: null,
-  //         corConta: null,
-  //         idImportacao: null,
-  //         tipo: "CREDIT",
-  //         dataHora: "02/05/2024 15:25:00",
-  //         valor: 500.0,
-  //         fitId: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ-1",
-  //         refNum: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ",
-  //         memo: "RECEBIMENTO PIX",
-  //         status: "IMPORTADO",
-  //         ordem: 1,
-  //         idGrupo: 484,
-  //         filhos: [],
-  //         tipoAlteracao: null,
-  //       },
-  //       {
-  //         id: 25,
-  //         idUser: 1,
-  //         idUe: 1,
-  //         nomeUe: "Ue teste 2",
-  //         idConta: null,
-  //         nomeConta: null,
-  //         nrConta: null,
-  //         banco: null,
-  //         corConta: null,
-  //         idImportacao: null,
-  //         tipo: "CREDIT",
-  //         dataHora: "02/05/2024 15:25:00",
-  //         valor: 4500.0,
-  //         fitId: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ-1",
-  //         refNum: "PIX_DEB   01508678910 NOEMI MARLI JACOBI POOTZ",
-  //         memo: "RECEBIMENTO PIX",
-  //         status: "IMPORTADO",
-  //         ordem: 1,
-  //         idGrupo: 484,
-  //         filhos: [],
-  //         tipoAlteracao: null,
-  //       },
-  //     ],
-  //     tipoAlteracao: null,
-  //   },
-  // ];
+  const { data: session } = useSession();
 
-  // const opInit: OperationTableType[] = [];
-
-  // const [operacoes, setOperacoes] = useState(opInit);
-  // const [grupos, setGrupos] = useState(opInit);
-
-  // useEffect(() => {
-  //   function setData() {
-  //     setGrupos(links.filter((l) => l.filhos && l.filhos.length > 0));
-  //     setOperacoes(links.filter((l) => !l.filhos || l.filhos.length == 0));
-  //   }
-
-  //   setData();
-  // });
-
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn('keycloak', {
+        callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/ues`,
+      }); // Force sign in to hopefully resolve error
+    }
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">

@@ -1,3 +1,4 @@
+"use client"
 import { apiOperacaoListarTodasPendentesEntreDatas } from "@/api/operacoesApi";
 import { GlobalContext } from "@/components/globalContext";
 import { OperationTableType } from "@/types/operationTableType";
@@ -18,14 +19,7 @@ export default function ListarOperacoes() {
   useEffect(() => {
     async function refreshData() {
       setIsLoading(true);
-      const resp = await fetchFromApi(`/v1/data/operacao/pendentes/${userSelected!.id}/${ueSelected!.id}`,
-        {
-          method: 'get',
-          headers: { 
-            accept: "application/json"
-          }
-        }
-        );
+      const resp = await fetchFromApi(`/v1/data/operacao/pendentes/${userSelected!.id}/${ueSelected!.id}`);
       setData(resp);
       setIsLoading(false);
     }
