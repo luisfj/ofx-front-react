@@ -96,7 +96,7 @@ const handler = NextAuth({
     },
 
     async redirect(urlObj) {
-      return urlObj.url.startsWith(urlObj.baseUrl) ? urlObj.url : urlObj.baseUrl;
+      return urlObj.url.startsWith(urlObj.baseUrl) ? urlObj.url : urlObj.baseUrl + urlObj.url;
     },
 
     async session({ session, token }: { session: any, token: JWT }) {

@@ -1,22 +1,11 @@
 "use client";
 
 import { HomeIcon } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 
 import Link from "next/link";
-import { useEffect } from "react";
 
-export default function Home() {
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      signIn('keycloak', {
-        callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/ues`,
-      }); // Force sign in to hopefully resolve error
-    }
-  }, []);
+export default function Home() {  
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">

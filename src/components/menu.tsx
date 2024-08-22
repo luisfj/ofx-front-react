@@ -6,9 +6,10 @@ import {
   LayoutDashboardIcon,
   UsersIcon,
 } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GlobalContext } from "./globalContext";
 import { ModeToggle } from "./modeToggle";
 import { ThemeProvider } from "./theme-provider";
@@ -18,14 +19,20 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function MenuBar() {
   const { userSelected, ueSelected } = useContext(GlobalContext);
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  console.warn(session);
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn('keycloak', {
+        redirect: false,
+        callbackUrl: pathname ?? '/',
+      }); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
 
   function verifyIsOpen(path: string) {
     if (pathname === path)
@@ -153,18 +160,18 @@ export default function MenuBar() {
 
             <>
               {/* Signed in as {session.user.email} <br /> */}
-              <button onClick={() => signOut({redirect: false, callbackUrl: '/ues'})}>Sign out</button>
+              <button onClick={() => signOut({ redirect: false, callbackUrl: '/ues' })}>Sign out</button>
             </>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
     )
   } else {
-    return(<div>
+    return (<div>
       Not signed in <br />
       <button onClick={() => signIn("keycloak", {
-          redirect:false,
-          callbackUrl: '/ues'
+        redirect: false,
+        callbackUrl: '/ues'
       })}>Sign in</button>
     </div>);
   }
