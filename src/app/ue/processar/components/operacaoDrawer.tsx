@@ -210,7 +210,6 @@ export default function OperacaoDrawer({
                   <CurrencyInput
                     defaultValue={valor}
                     onValueChange={(value, name, values) => {
-console.log(value, name, values);
                       setValor(!values || !values.float ? 0 : values.float);
                     }}
                     intlConfig={INTL_CONFIG_NO_CURRENCY}
