@@ -28,8 +28,9 @@ export default function FiltroDataBetween() {
         setRefreshFilter } = React.useContext(FiltroDataBetweenContext);
 
     return (
-        <Card><CardContent className="items-middle">
-            <div className="grid gap-1 grid-cols-4 items-center mt-6">
+        <Card className="mt-2">
+            <CardContent>
+            <div className="grid gap-4 grid-cols-3 items-center mt-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right">Data Inicial</Label>
                     <Popover>
@@ -90,11 +91,12 @@ export default function FiltroDataBetween() {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <Button className="max-w-[30ch]" onClick={() => setRefreshFilter!(new Date())}>
+                <Button className="ml-5 max-w-[20ch]" onClick={() => setRefreshFilter!(new Date())}>
                     <UpdateIcon className="mr-2 h-4 w-4" />Atualizar
                 </Button>
             </div>
-        </CardContent></Card>
+        </CardContent>
+        </Card>
     );
 }
 
