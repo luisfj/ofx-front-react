@@ -1,6 +1,6 @@
 "use client";
 
-import { apiOperacaoFindById, apiOperacaoUpdate } from "@/api/operacoesApi";
+import { fetchFromApi, fetchPutToApi } from "@/api/callApi";
 import { GlobalContext } from "@/components/globalContext";
 import { CreateOperacaoType } from "@/types/createOperationType";
 import { formatDate } from "date-fns";
@@ -17,14 +17,10 @@ export default function AtualizarOperacaoDrawer({
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [idEdit, setIdEdit] = React.useState(0);
   const [idGrupo, setIdGrupo] = React.useState(0);
-  const { userSelected, ueSelected } = React.useContext(GlobalContext);
+  const { ueSelected } = React.useContext(GlobalContext);
 
   const findInDbAsync = async () => {
-    const data = await apiOperacaoFindById(
-      userSelected!.id,
-      ueSelected!.id,
-      idOperacao
-    );
+    const data = await fetchFromApi(`/v1/data/operacao/single/${ueSelected!.id}/${idOperacao}`)
 
     setDataS({
       id: data.id,
@@ -74,12 +70,7 @@ export default function AtualizarOperacaoDrawer({
       valor: obj.valor,
     };
 
-    const response = await apiOperacaoUpdate(
-      userSelected!.id,
-      ueSelected!.id,
-      idEdit,
-      objData
-    );
+    const response = await fetchPutToApi(`/v1/data/operacao/single/${ueSelected!.id}/${idEdit}`, objData);
 
     if (!response.ok) {
       throw new Error("Failed to submit the data. Please try again.");
@@ -90,7 +81,7 @@ export default function AtualizarOperacaoDrawer({
     return idGrupo;
   };
 
-  if (!userSelected || !ueSelected)
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   return (

@@ -8,7 +8,7 @@ import { fetchFromApi } from "@/api/callApi";
 
 export default function ListarGrupos() {
   const { lastUpdateGrupos } = useContext(ProcessarDadosChangeContext);
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<OperationTableType[]>([]);
@@ -16,17 +16,17 @@ export default function ListarGrupos() {
   async function refreshData() {
     setIsLoading(true);
     
-    const resp = await fetchFromApi(`/v1/data/grupo/${userSelected!.id}/${ueSelected!.id}`);
-    setData(resp);
-    setIsLoading(false);
+    fetchFromApi(`/v1/data/grupo/${ueSelected!.id}`)
+    .then(resp => setData(resp))
+    .finally(() => setIsLoading(false));    
   }
 
   useEffect(() => {
-    if (userSelected && ueSelected) refreshData();
+    if (ueSelected) refreshData();    
   }, [, lastUpdateGrupos]);
 
-  if (!userSelected || !ueSelected)
-    return <div>Deve selecionar o usuário e a ue para continuar</div>;
+  if (!ueSelected)
+    return <div>Deve selecionar a ue para continuar</div>;
 
   return <TableGrupos isLoading={isLoading} operations={data}></TableGrupos>;
 }

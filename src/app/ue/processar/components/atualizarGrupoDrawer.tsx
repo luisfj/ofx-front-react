@@ -1,12 +1,12 @@
 "use client";
 
-import { apiGrupoUpdate } from "@/api/gruposApi";
-import { apiOperacaoFindById } from "@/api/operacoesApi";
+import { fetchFromApi, fetchPutToApi } from "@/api/callApi";
 import { GlobalContext } from "@/components/globalContext";
 import { CreateGrupoType } from "@/types/createGrupoType";
 import { formatDate } from "date-fns";
 import React, { useContext, useEffect, useState } from "react";
 import OperacaoDrawer from "./operacaoDrawer";
+import { DateTime } from "luxon";
 
 export default function AtualizarGrupoDrawer({
   idGrupo,
@@ -17,14 +17,10 @@ export default function AtualizarGrupoDrawer({
 }) {
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [idEdit, setIdEdit] = React.useState(0);
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
 
   const findInDbAsync = async () => {
-    const data = await apiOperacaoFindById(
-      userSelected!.id,
-      ueSelected!.id,
-      idGrupo
-    );
+    const data = await fetchFromApi(`/v1/data/operacao/single/${ueSelected!.id}/${idGrupo}`);
 
     setDataS({
       id: data.id,
@@ -46,7 +42,7 @@ export default function AtualizarGrupoDrawer({
 
   const [dataS, setDataS] = useState({
     id: 0,
-    dataHora: formatDate(new Date(), "y-MM-dd"),
+    dataHora: DateTime.now().toFormat("yyyy-MM-dd"),
     fitId: "",
     memo: "",
     refNum: "",
@@ -68,12 +64,7 @@ export default function AtualizarGrupoDrawer({
       ordem: 0,
     };
 
-    const response = await apiGrupoUpdate(
-      userSelected!.id,
-      ueSelected!.id,
-      idEdit,
-      objData
-    );
+    const response = await fetchPutToApi(`/v1/data/grupo/${ueSelected!.id}/${idEdit}`, objData);
 
     if (!response.ok) {
       throw new Error("Failed to submit the data. Please try again.");
@@ -83,7 +74,7 @@ export default function AtualizarGrupoDrawer({
     console.log(data);
   };
 
-  if (!userSelected || !ueSelected)
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { fetchUploadToApi } from "@/api/callApi";
 import { apiUploadOfx } from "@/api/importacoesApi";
 import { GlobalContext } from "@/components/globalContext";
 import { Button } from "@/components/ui/button";
@@ -19,10 +20,10 @@ import { useContext, useState } from "react";
 
 export default function ImportarOfxPage() {
   const [selectedFile, setSelectedFile] = useState();
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
 
-  if (!userSelected || !ueSelected)
-    return <div>Deve selecionar usuário e ue para continuar</div>;
+  if (!ueSelected)
+    return <div>Deve selecionar a ue para continuar</div>;
 
   const changeHandler = (event: any) => {
     if (event.target.files) setSelectedFile(event.target.files[0]);
@@ -41,8 +42,7 @@ export default function ImportarOfxPage() {
     var formData = new FormData();
 
     formData.append("file", selectedFile, (selectedFile as File).name);
-
-    apiUploadOfx(userSelected.id, ueSelected.id, formData)
+    fetchUploadToApi(`/v1/import/upload-ofx/${ueSelected.id}`, formData)
       .then((response) => response.text())
       .then((result) => {
         setSelectedFile(undefined);

@@ -1,33 +1,49 @@
 "use client";
 
-import { apiGrupoSave } from "@/api/gruposApi";
+import { fetchPostToApi } from "@/api/callApi";
 import { GlobalContext } from "@/components/globalContext";
 import { CreateGrupoType } from "@/types/createGrupoType";
-import { formatDate } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OperacaoDrawer from "./operacaoDrawer";
+import { convertToDate, formatDate } from "@/utils/dateUtils";
+import { DateTime } from 'luxon';
+
+export type NewGroupDefaultProperties = {
+  descricao: string,
+  data: string | null
+}
 
 export default function AdicionarGrupoDrawer({
   openDrawer,
   setOpenDrawer,
   setIdGrupoAdicionado,
+  defaultValues
 }: {
   openDrawer: boolean;
   setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
   setIdGrupoAdicionado: React.Dispatch<React.SetStateAction<number>> | null;
+  defaultValues?: NewGroupDefaultProperties
 }) {
-  const { userSelected, ueSelected } = React.useContext(GlobalContext);
-
+  const { ueSelected } = React.useContext(GlobalContext);
+  
   const [dataS, setDataS] = useState({
     id: 0,
-    dataHora: formatDate(new Date(), "y-MM-dd"),
+    dataHora: DateTime.now().toFormat('yyyy-MM-dd'),
     fitId: "",
     memo: "",
     refNum: "",
     valor: 0,
   });
 
-  if (!userSelected || !ueSelected)
+  useEffect(() => {
+    if (!defaultValues)
+      return;
+    dataS.dataHora = defaultValues.data;
+    dataS.memo = defaultValues.descricao;
+    setDataS(dataS);
+  }, [, defaultValues])
+
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   const handleSaveClick = async (obj: {
@@ -45,15 +61,7 @@ export default function AdicionarGrupoDrawer({
       ordem: 0,
     };
 
-    const response = await apiGrupoSave(
-      userSelected.id,
-      ueSelected.id,
-      objData
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to submit the data. Please try again.");
-    }
+    const response = await fetchPostToApi(`/v1/data/grupo/${ueSelected.id}`, objData);
 
     const data = await response.json();
     console.log(data);

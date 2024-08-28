@@ -9,4 +9,15 @@ export type UserBasicType = UUType & {
     nrUes: number;
 };
 
-export type UeBasicType = UUType
+export type UeBasicType = {
+    ueId: number,
+    ueName: string,
+    createdUserId: number,
+    createdEmail: string,
+    color?: string | null;
+}
+
+export type UeBasicRegisterType = {
+    name: string,
+    color?: string | null;
+}

@@ -6,10 +6,10 @@ import React from "react";
 import ActionCard from "./components/actionCard";
 
 export default function UePage() {
-  const { userSelected, ueSelected } = React.useContext(GlobalContext);
+  const { ueSelected } = React.useContext(GlobalContext);
 
-  if (!userSelected || !ueSelected)
-    return <div>Deve selecionar o usuário e a ue para continuar</div>;
+  if (!ueSelected)
+    return <div>Deve selecionar a ue para continuar</div>;
 
   return (
     <>

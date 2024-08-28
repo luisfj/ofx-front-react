@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { apiOperacaoAdicionarOperacoesAoGrupo } from "@/api/operacoesApi";
+import { fetchDeleteToApi, fetchPostToApi } from "@/api/callApi";
 import ConfirmDialog, { ConfirmDialogType } from "@/components/confirm-dialog";
 import { GlobalContext } from "@/components/globalContext";
 import { Button } from "@/components/ui/button";
@@ -44,135 +44,166 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { OperationTableType } from "@/types/operationTableType";
+import { convertToDate } from "@/utils/dateUtils";
 import { formatCurrency } from "@/utils/numberFormat";
-import { CopyPlusIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import { CopyIcon, CopyPlusIcon, PenIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
 import { PacmanLoader } from "react-spinners";
-import AdicionarGrupoDrawer from "./adicionarGrupoDrawer";
+import AdicionarGrupoDrawer, { NewGroupDefaultProperties } from "./adicionarGrupoDrawer";
 import AdicionarOperacaoDrawer from "./adicionarOperacaoDrawer";
+import AtualizarOperacaoDrawer from "./atualizarOperacaoDrawer";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableGruposFilters from "./tableGruposFilters";
+import { LinkRemoveType } from "@/types/util/linkRemoveType";
 
-export const defaultColumns: ColumnDef<OperationTableType>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
+function createDefaultColumns(
+  setIdEditOperacao: React.Dispatch<React.SetStateAction<number>>,
+  confirmaExcluirOperacao: React.Dispatch<LinkRemoveType>
+): ColumnDef<OperationTableType>[] {
+  const defaultColumns: ColumnDef<OperationTableType>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
 
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "memo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Descrição
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("memo")}</div>,
-  },
-  {
-    accessorKey: "tipo",
-    header: "Tipo",
-    // visible: false,
-    cell: ({ row }) => <div className="capitalize">{row.getValue("tipo")}</div>,
-  },
-  {
-    accessorKey: "refNum",
-    header: "Ref Num",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("refNum")}</div>
-    ),
-  },
-  {
-    accessorKey: "fitId",
-    header: "Fit Id",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("fitId")}</div>
-    ),
-  },
-  {
-    accessorKey: "nomeConta",
-    header: "Conta",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("nomeConta")}</div>
-    ),
-  },
-  {
-    accessorKey: "dataHora",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Data
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    {
+      accessorKey: "memo",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Descrição
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div className="capitalize">{row.getValue("memo")}</div>,
     },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("dataHora")}</div>
-    ),
-  },
-  {
-    accessorKey: "valor",
-    header: () => <div className="text-right">Valor</div>,
-    cell: ({ row }) => {
-      const formatted = formatCurrency(row.getValue("valor"));
-      return <div className="text-right font-medium">{formatted}</div>;
+    {
+      accessorKey: "tipo",
+      header: "Tipo",
+      // visible: false,
+      cell: ({ row }) => <div className="capitalize">{row.getValue("tipo")}</div>,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const operation = row.original;
+    {
+      accessorKey: "refNum",
+      header: "Ref Num",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("refNum")}</div>
+      ),
+    },
+    {
+      accessorKey: "fitId",
+      header: "Fit Id",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("fitId")}</div>
+      ),
+    },
+    {
+      accessorKey: "nomeConta",
+      header: "Conta",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("nomeConta")}</div>
+      ),
+    },
+    {
+      accessorKey: "dataHora",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Data
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("dataHora")}</div>
+      ),
+    },
+    {
+      accessorKey: "valor",
+      header: () => <div className="text-right">Valor</div>,
+      cell: ({ row }) => {
+        const formatted = formatCurrency(row.getValue("valor"));
+        return <div className="text-right font-medium">{formatted}</div>;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const operation = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText("" + operation.id)}
-            >
-              Copy operation ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText("" + operation.memo)}
+              >
+                <CopyIcon className="h-4 w-8" /> Copiar Descrição
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText("" + operation.fitId)}
+              >
+                <CopyIcon className="h-4 w-8" /> Copiar RefNum
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setIdEditOperacao(operation.id);
+                }}
+              >
+                <PenIcon className="h-4 w-8" /> Editar Operação
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-muted-foreground focus:bg-destructive"
+                onClick={() => {
+                  confirmaExcluirOperacao({
+                    id: operation.id,
+                    tipo: "EXCLUIR",
+                  });
+                }}
+              >
+                <Trash2Icon className="h-4 w-8" /> Excluir Operação
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  },
-];
+  ];
+  return defaultColumns;
+}
+
 
 export default function TableOperations({
   operations,
@@ -181,20 +212,22 @@ export default function TableOperations({
   operations: OperationTableType[];
   isLoading: boolean;
 }) {
-  const { userSelected, ueSelected } = React.useContext(GlobalContext);
+  const { ueSelected } = React.useContext(GlobalContext);
 
   const { selectedGrupos, setLastUpdateOperacoes, setLastUpdateGrupos } =
     React.useContext(ProcessarDadosChangeContext);
 
   const confirDialogDataBasic: ConfirmDialogType = {
     idOperacao: 0,
-    onClick: () => {},
+    onClick: () => { },
     tipo: "CONFIRM",
   };
 
   const [dataConfirmDialog, setDataConfirmDialog] = React.useState(
     confirDialogDataBasic
   );
+
+  const [defaultValuesNewGroup, setDefaultValuesNewGroup] = React.useState<NewGroupDefaultProperties>();
 
   const [openDrawerAdicionarGrupo, setOpenDrawerAdicionarGrupo] =
     React.useState(false);
@@ -218,6 +251,32 @@ export default function TableOperations({
   const [rowSelection, setRowSelection] = React.useState({});
   const [openDrawer, setOpenDrawer] = React.useState(false);
 
+  function confirmaExcluirOperacao(dataRemove: LinkRemoveType) {
+    setDataConfirmDialog({
+      idOperacao: dataRemove.id,
+      onClick: excluirOperacaoDefinitivamente,
+      tipo: "DELETE",
+    });
+  }
+
+  async function excluirOperacaoDefinitivamente(idOperacao: number) {
+    try {
+      await fetchDeleteToApi(`/v1/data/operacao/single/${ueSelected!.id}/${idOperacao}`);
+
+      toast({
+        title: "Sucesso!",
+        description: "Excluído com sucesso",
+      });
+      if (setLastUpdateOperacoes) setLastUpdateOperacoes(new Date());
+    } catch (error: any) {
+      toast({
+        title: "Atenção!",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  }
+
   React.useEffect(() => {
     function sum(a: number | null, b: number | null): number {
       return (a ?? 0) + (b ?? 0);
@@ -226,9 +285,9 @@ export default function TableOperations({
     const totalSel =
       table.getSelectedRowModel().rows.length > 0
         ? table
-            .getSelectedRowModel()
-            .rows.map((sel) => sel.original.valor)
-            .reduce((p, c) => sum(p, c))
+          .getSelectedRowModel()
+          .rows.map((sel) => sel.original.valor)
+          .reduce((p, c) => sum(p, c))
         : 0;
     setTotalSelected(formatCurrency(totalSel));
   }, [rowSelection]);
@@ -251,12 +310,9 @@ export default function TableOperations({
   }, [idGrupoAdicionado]);
 
   async function adicionarOperacoesSelecionadasAoGrupo(idGrupo: number) {
-    const response = await apiOperacaoAdicionarOperacoesAoGrupo(
-      userSelected!.id,
-      ueSelected!.id,
-      idGrupo,
-      table.getSelectedRowModel().rows.map((op) => op.original.id)
-    );
+    const response = await fetchPostToApi(
+      `/v1/data/operacao/agrupar/${ueSelected!.id}/${idGrupo}`,
+      table.getSelectedRowModel().rows.map((op) => op.original.id))
 
     if (!response.ok) {
       throw new Error("Failed to submit the data. Please try again.");
@@ -272,6 +328,8 @@ export default function TableOperations({
     if (setLastUpdateOperacoes) setLastUpdateOperacoes(new Date());
     if (setLastUpdateGrupos) setLastUpdateGrupos(new Date());
   }
+
+  const defaultColumns = createDefaultColumns(setIdOperacaoEdit, confirmaExcluirOperacao);
 
   const table = useReactTable({
     data: operations,
@@ -292,11 +350,11 @@ export default function TableOperations({
     },
   });
 
-  if (!userSelected || !ueSelected)
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   return (
-    <div className="w-full">
+    <div className="w-full sm:p-4">
       <ConfirmDialog
         dataConfirm={dataConfirmDialog}
         setDataConfirm={setDataConfirmDialog}
@@ -311,14 +369,13 @@ export default function TableOperations({
         setOpenDrawer={setOpenDrawerAdicionarGrupo}
         openDrawer={openDrawerAdicionarGrupo}
         setIdGrupoAdicionado={setIdGrupoAdicionado}
+        defaultValues={defaultValuesNewGroup}
       />
-      {/* 
+      <AtualizarOperacaoDrawer
+        idOperacao={idOperacaoEdit}
+        setIdOperacao={setIdOperacaoEdit}
+      />
 
-<AtualizarOperacaoDrawer
-          idOperacao={idOperacaoEdit}
-          setIdOperacao={setIdOperacaoEdit}
-          params={params}
-        />*/}
       <Button variant={"secondary"} onClick={() => setIdGrupoAddOperacao(0)}>
         <PlusIcon className="small" /> Nova Operação
       </Button>
@@ -348,9 +405,9 @@ export default function TableOperations({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       );
                     })}
@@ -411,7 +468,16 @@ export default function TableOperations({
             Adicionar ao Grupo...
           </ContextMenuItem>
           <ContextMenuItem
-            onClick={() => setOpenDrawerAdicionarGrupo(true)}
+            onClick={() => {
+              const desc = table.getSelectedRowModel().rows[0].original.memo;
+              const dtHora = table.getSelectedRowModel().rows[0].original.dataHora;
+              console.log(dtHora)
+              setDefaultValuesNewGroup({
+                data: convertToDate("y-MM-dd", dtHora),
+                descricao: desc ?? ""
+              })
+              setOpenDrawerAdicionarGrupo(true);
+            }}
             disabled={table.getFilteredSelectedRowModel().rows.length <= 0}
           >
             <CopyPlusIcon className="ml-2 mr-2 h-4 w-4" />

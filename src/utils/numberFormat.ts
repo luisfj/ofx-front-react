@@ -22,3 +22,6 @@ export function formatCurrencyIntl(value: number | null, showPrefix: boolean = f
     }).format(value ?? 0)
     return formatted;
 }
+
+export const INTL_CONFIG = { locale: 'pt-BR', currency: 'BRL' };
+export const INTL_CONFIG_NO_CURRENCY = { locale: 'pt-BR' };

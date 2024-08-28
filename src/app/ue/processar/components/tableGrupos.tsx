@@ -1,8 +1,4 @@
-import { apiGrupoDelete } from "@/api/gruposApi";
-import {
-  apiOperacaoDelete,
-  apiOperacaoRemoverDoGrupo,
-} from "@/api/operacoesApi";
+import { fetchDeleteToApi, fetchPutToApiNoBody } from "@/api/callApi";
 import ConfirmDialog, { ConfirmDialogType } from "@/components/confirm-dialog";
 import { GlobalContext } from "@/components/globalContext";
 import LinksTable from "@/components/links-table";
@@ -202,7 +198,7 @@ export default function TableGrupos({
 }) {
   const { setLastUpdateGrupos, setSelectedGrupos, setLastUpdateOperacoes } =
     useContext(ProcessarDadosChangeContext);
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
 
   const [totalSelected, setTotalSelected] = React.useState<string>(
     formatCurrency(0)
@@ -249,9 +245,9 @@ export default function TableGrupos({
     const totalSel =
       table.getSelectedRowModel().rows.length > 0
         ? table
-            .getSelectedRowModel()
-            .rows.map((sel) => sel.original.valor)
-            .reduce((p, c) => sum(p, c))
+          .getSelectedRowModel()
+          .rows.map((sel) => sel.original.valor)
+          .reduce((p, c) => sum(p, c))
         : 0;
     setTotalSelected(formatCurrency(totalSel));
     if (setSelectedGrupos)
@@ -274,7 +270,7 @@ export default function TableGrupos({
 
   async function excluirGrupoDefinitivamente(idGrupo: number) {
     try {
-      await apiGrupoDelete(userSelected!.id, ueSelected!.id, idGrupo);
+      await fetchDeleteToApi(`/v1/data/grupo/${ueSelected!.id}/${idGrupo}`);
 
       toast({
         title: "Sucesso!",
@@ -304,11 +300,7 @@ export default function TableGrupos({
 
   async function removerOperacaoDoGrupo(idOperacao: number) {
     try {
-      await apiOperacaoRemoverDoGrupo(
-        userSelected!.id,
-        ueSelected!.id,
-        idOperacao
-      );
+      await fetchPutToApiNoBody(`/v1/data/operacao/remover-grupo/${ueSelected!.id}/${idOperacao}`);
 
       toast({
         title: "Sucesso!",
@@ -328,7 +320,7 @@ export default function TableGrupos({
 
   async function excluirOperacaoDefinitivamente(idOperacao: number) {
     try {
-      await apiOperacaoDelete(userSelected!.id, ueSelected!.id, idOperacao);
+      await fetchDeleteToApi(`/v1/data/operacao/single/${ueSelected!.id}/${idOperacao}`);
 
       toast({
         title: "Sucesso!",
@@ -367,11 +359,11 @@ export default function TableGrupos({
     },
   });
 
-  if (!userSelected || !ueSelected)
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   return (
-    <>
+    
       <div className="w-full sm:p-4">
         <ConfirmDialog
           dataConfirm={dataConfirmDialog}
@@ -417,6 +409,6 @@ export default function TableGrupos({
           setIdEditOperacao={setIdOperacaoEdit}
         ></LinksTable>
       </div>
-    </>
+    
   );
 }

@@ -21,7 +21,7 @@ import {
 } from "./ui/navigation-menu";
 
 export default function MenuBar() {
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -45,32 +45,10 @@ export default function MenuBar() {
       <div>
         <NavigationMenu>
           <NavigationMenuList>
-            <Link href="/users" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={
-                  (pathname === "/users" ? "disabled " : "") +
-                  (userSelected
-                    ? "text-active-foreground focus:text-active-foreground "
-                    : "") +
-                  "h4rem " +
-                  navigationMenuTriggerStyle()
-                }
-              >
-                {verifyIsOpen("/users")}
-                <UsersIcon className="inline-block mr-2 h-10 w-10" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Acesso</p>
-                  <p className="text-muted-foreground">
-                    {userSelected?.nome ?? "Não conectado"}
-                  </p>
-                </div>
-              </NavigationMenuLink>
-            </Link>
-
             <Link href={"/ues"} legacyBehavior passHref>
               <NavigationMenuLink
                 className={
-                  (!userSelected || pathname === "/ues" ? "disabled " : "") +
+                  (pathname === "/ues" ? "disabled " : "") +
                   (ueSelected
                     ? "text-active-foreground focus:text-active-foreground hover:text-active-foreground "
                     : "") +
@@ -93,7 +71,7 @@ export default function MenuBar() {
             <Link href={"/ue"} legacyBehavior passHref>
               <NavigationMenuLink
                 className={
-                  (!userSelected || !ueSelected || pathname === "/ue"
+                  (!ueSelected || pathname === "/ue"
                     ? "disabled "
                     : "") +
                   "h4rem " +
@@ -113,7 +91,7 @@ export default function MenuBar() {
             <Link href={"/ue/importar"} legacyBehavior passHref>
               <NavigationMenuLink
                 className={
-                  (!userSelected || !ueSelected || pathname === "/ue/importar"
+                  (!ueSelected || pathname === "/ue/importar"
                     ? "disabled "
                     : "") +
                   "h4rem " +
@@ -133,7 +111,7 @@ export default function MenuBar() {
             <Link href={"/ue/processar"} legacyBehavior passHref>
               <NavigationMenuLink
                 className={
-                  (!userSelected || !ueSelected || pathname === "/ue/processar"
+                  (!ueSelected || pathname === "/ue/processar"
                     ? "disabled "
                     : "") +
                   "h4rem " +

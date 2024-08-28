@@ -22,11 +22,15 @@ import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { OperacaoReturnType } from "@/types/operacaoReturnType";
 import { OperacaoSaveType } from "@/types/operacaoSaveType";
-import { format } from "date-fns";
+import { INTL_CONFIG_NO_CURRENCY } from "@/utils/numberFormat";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { DateTime } from 'luxon';
 import React, { useContext } from "react";
+import CurrencyInput from "react-currency-input-field";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
+import { getBackendValidDate } from "@/utils/dateUtils";
+
 
 export default function OperacaoDrawer({
   openDrawer,
@@ -45,13 +49,11 @@ export default function OperacaoDrawer({
     ProcessarDadosChangeContext
   );
 
-  const dataAtual = new Date();
-  dataAtual.setHours(0, 0, 0, 0);
 
-  const [date, setDate] = React.useState<Date | undefined>(
+  const [date, setDate] = React.useState<DateTime | undefined>(
     objectData && objectData.dataHora
-      ? new Date(objectData.dataHora)
-      : dataAtual
+      ? getBackendValidDate(objectData.dataHora)
+      : DateTime.now()
   );
   const [memo, setMemo] = React.useState<string>(
     objectData ? objectData.memo : ""
@@ -63,18 +65,22 @@ export default function OperacaoDrawer({
     objectData ? objectData.valor : 0
   );
   const [saveDisabled, setSaveDisabled] = React.useState(false);
+  const [fitChanged, setFitChanged] = React.useState(false);
 
   const onOpenStateChange: React.Dispatch<React.SetStateAction<boolean>> = (
     state
   ) => {
     setDate(
       objectData && objectData.dataHora
-        ? new Date(objectData.dataHora)
-        : dataAtual
+        ? getBackendValidDate(objectData.dataHora)
+        : DateTime.now()
     );
     setMemo(objectData ? objectData.memo : "");
     setFitId(objectData ? objectData.fitId! : "");
     setValor(objectData ? objectData.valor : 0);
+
+    setFitChanged(fitId !== memo);
+
     setSaveDisabled(false);
 
     setOpenDrawer(state);
@@ -84,13 +90,13 @@ export default function OperacaoDrawer({
     try {
       if (!date || !memo) throw new Error("Os campos devem ser preenchidos.");
 
-      if (tipo == "OPERACAO" && (!fitId || !valor))
+      if (tipo == "OPERACAO" && !fitId)
         throw new Error("Os campos devem ser preenchidos.");
 
       setSaveDisabled(true);
 
       await saveFunc({
-        dataHora: format(date, "y-MM-dd") + "T00:00:00",
+        dataHora: date.toFormat("yyyy-MM-dd'T'00:00:00"),
         memo: memo,
         refNum: fitId,
         fitId: fitId,
@@ -145,7 +151,7 @@ export default function OperacaoDrawer({
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {date ? (
-                        format(date, "dd/MM/y")
+                        date.toFormat('dd/MM/yyyy')
                       ) : (
                         <span>Selectione a Data</span>
                       )}
@@ -155,8 +161,8 @@ export default function OperacaoDrawer({
                     <Calendar
                       mode="single"
                       locale={ptBR}
-                      selected={date}
-                      onSelect={setDate}
+                      selected={date?.toJSDate()}
+                      onSelect={(date) => setDate(date ? DateTime.fromJSDate(date) : undefined)}
                       initialFocus
                     />
                   </PopoverContent>
@@ -168,7 +174,11 @@ export default function OperacaoDrawer({
                 </Label>
                 <Input
                   value={memo ?? ""}
-                  onChange={(event) => setMemo(event.target.value)}
+                  onChange={(event) => {
+                    setMemo(event.target.value);
+                    if (!fitChanged)
+                      setFitId(event.target.value)
+                  }}
                   placeholder="Descrição"
                   className="col-span-3"
                 />
@@ -180,7 +190,11 @@ export default function OperacaoDrawer({
                   <Label className="text-right">FitId</Label>
                   <Input
                     value={fitId ?? ""}
-                    onChange={(event) => setFitId(event.target.value)}
+                    onChange={(event) => {
+                      if (memo !== event.target.value)
+                        setFitChanged(true);
+                      setFitId(event.target.value);
+                    }}
                     placeholder="Fit Id"
                     className="col-span-3"
                   />
@@ -192,14 +206,15 @@ export default function OperacaoDrawer({
               ) : (
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">Valor</Label>
-                  <Input
-                    value={valor ?? ""}
-                    onChange={(event) =>
-                      setValor(Number.parseFloat(event.target.value))
-                    }
-                    placeholder="Valor"
-                    className="col-span-3"
-                  />
+
+                  <CurrencyInput
+                    defaultValue={valor}
+                    onValueChange={(value, name, values) => {
+console.log(value, name, values);
+                      setValor(!values || !values.float ? 0 : values.float);
+                    }}
+                    intlConfig={INTL_CONFIG_NO_CURRENCY}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 col-span-3" />
                 </div>
               )}
             </div>

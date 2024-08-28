@@ -6,6 +6,7 @@ import { CreateOperacaoType } from "@/types/createOperationType";
 import { formatDate } from "date-fns";
 import React, { useEffect } from "react";
 import OperacaoDrawer from "./operacaoDrawer";
+import { fetchPostToApi } from "@/api/callApi";
 
 export default function AdicionarOperacaoDrawer({
   idGrupo,
@@ -16,7 +17,7 @@ export default function AdicionarOperacaoDrawer({
 }) {
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [idEdit, setIdEdit] = React.useState(0);
-  const { userSelected, ueSelected } = React.useContext(GlobalContext);
+  const { ueSelected } = React.useContext(GlobalContext);
 
   const dataS = {
     id: 0,
@@ -35,7 +36,7 @@ export default function AdicionarOperacaoDrawer({
     }
   }, [idGrupo]);
 
-  if (!userSelected || !ueSelected)
+  if (!ueSelected)
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   const handleSaveClick = async (obj: {
@@ -57,16 +58,8 @@ export default function AdicionarOperacaoDrawer({
       valor: obj.valor,
     };
 
-    const response = await apiOperacaoSave(
-      userSelected.id,
-      ueSelected.id,
-      objData
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to submit the data. Please try again.");
-    }
-
+    const response = await fetchPostToApi(`/v1/data/operacao/single/${ueSelected.id}`, objData)
+    
     const data = await response.json();
     console.log(data);
     return idEdit;

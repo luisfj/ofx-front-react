@@ -9,7 +9,7 @@ import { fetchFromApi } from "@/api/callApi";
 
 export default function ListarOperacoes() {
   const { lastUpdateOperacoes } = useContext(ProcessarDadosChangeContext);
-  const { userSelected, ueSelected } = useContext(GlobalContext);
+  const { ueSelected } = useContext(GlobalContext);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,15 +19,15 @@ export default function ListarOperacoes() {
   useEffect(() => {
     async function refreshData() {
       setIsLoading(true);
-      const resp = await fetchFromApi(`/v1/data/operacao/pendentes/${userSelected!.id}/${ueSelected!.id}`);
+      const resp = await fetchFromApi(`/v1/data/operacao/pendentes/${ueSelected!.id}`);
       setData(resp);
       setIsLoading(false);
     }
-    if (userSelected && ueSelected) refreshData();
+    if (ueSelected) refreshData();
   }, [, lastUpdateOperacoes]);
 
-  if (!userSelected || !ueSelected)
-    return <div>Deve selecionar o usuário e a ue para continuar</div>;
+  if (!ueSelected)
+    return <div>Deve selecionar a ue para continuar</div>;
 
   return <TableOperations isLoading={isLoading} operations={data} />;
 }
