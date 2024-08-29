@@ -1,10 +1,10 @@
 "use client";
+import { ExitIcon, ReaderIcon } from "@radix-ui/react-icons";
 import {
   DatabaseIcon,
-  HomeIcon,
+  GroupIcon,
   ImportIcon,
-  LayoutDashboardIcon,
-  UsersIcon,
+  LayoutDashboardIcon
 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default function MenuBar() {
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn('keycloak', {
-        redirect: false,
+        redirect: true,
         callbackUrl: pathname ?? '/',
       }); // Force sign in to hopefully resolve error
     }
@@ -80,10 +80,30 @@ export default function MenuBar() {
               >
                 {verifyIsOpen("/ue")}
 
-                <HomeIcon className="inline-block mr-2 h-10 w-10" />
+                <GroupIcon className="inline-block mr-2 h-10 w-10" />
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Home</p>
-                  <p className="text-muted-foreground">Dashboards</p>
+                  <p className="text-sm font-medium leading-none">Grupos</p>
+                  <p className="text-muted-foreground">Listar</p>
+                </div>
+              </NavigationMenuLink>
+            </Link>
+
+            <Link href={"/ue/operacoes"} legacyBehavior passHref>
+              <NavigationMenuLink
+                className={
+                  (!ueSelected || pathname === "/ue/operacoes"
+                    ? "disabled "
+                    : "") +
+                  "h4rem " +
+                  navigationMenuTriggerStyle()
+                }
+              >
+                {verifyIsOpen("/ue/operacoes")}
+
+                <ReaderIcon className="inline-block mr-2 h-10 w-10" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-none">Operações</p>
+                  <p className="text-muted-foreground">Processadas</p>
                 </div>
               </NavigationMenuLink>
             </Link>
@@ -103,7 +123,7 @@ export default function MenuBar() {
                 <ImportIcon className="inline-block mr-2 h-10 w-10" />
                 <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">Importar</p>
-                  <p className="text-muted-foreground">Importar arquivo</p>
+                  <p className="text-muted-foreground">Arquivos OFX</p>
                 </div>
               </NavigationMenuLink>
             </Link>
@@ -123,7 +143,7 @@ export default function MenuBar() {
                 <LayoutDashboardIcon className="inline-block mr-2 h-10 w-10" />
                 <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">Processar</p>
-                  <p className="text-muted-foreground">Processar dados</p>
+                  <p className="text-muted-foreground">Dados</p>
                 </div>
               </NavigationMenuLink>
             </Link>
@@ -138,7 +158,13 @@ export default function MenuBar() {
 
             <>
               {/* Signed in as {session.user.email} <br /> */}
-              <button onClick={() => signOut({ redirect: false, callbackUrl: '/ues' })}>Sign out</button>
+              {/* <button onClick={() => signOut({ redirect: false, callbackUrl: '/ues' })}> */}
+              <a href="#" className="h4rem group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                onClick={() => signOut({ redirect: true, callbackUrl: '/' })}>
+                <ExitIcon className="inline-block mr-2 h-10 w-10" />
+                Sign out
+                {/* </button> */}
+              </a>
             </>
           </NavigationMenuList>
         </NavigationMenu>

@@ -1,22 +1,21 @@
 "use client"
-import { apiOperacaoListarTodasPendentesEntreDatas } from "@/api/operacoesApi";
+import { fetchFromApi } from "@/api/callApi";
+import { FiltroDataBetweenContext } from "@/components/filtro-data-between";
 import { GlobalContext } from "@/components/globalContext";
-import { OperationTableType } from "@/types/operationTableType";
+import { ProcOperationTableType } from "@/types/operationTableType";
 import { useContext, useEffect, useState } from "react";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableOperations from "./TableOperations";
-import { fetchFromApi } from "@/api/callApi";
-import { FiltroDataBetweenContext } from "@/components/filtro-data-between";
 
-export default function ListarOperacoes() {
+export default function ListarOperacoesAProcessar() {
   const { lastUpdateOperacoes } = useContext(ProcessarDadosChangeContext);
-  const { dataInicial, dataFinal, refreshFilter } = useContext(FiltroDataBetweenContext);  
+  const { dataInicial, dataFinal, refreshFilter } = useContext(FiltroDataBetweenContext);
 
   const { ueSelected } = useContext(GlobalContext);
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [data, setData] = useState<OperationTableType[]>([]);
+  const [data, setData] = useState<ProcOperationTableType[]>([]);
 
 
   useEffect(() => {
