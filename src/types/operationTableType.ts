@@ -21,3 +21,8 @@ export type OperationTableType = {
     filhos: OperationTableType[];
     tipoAlteracao: string | null;
 };
+
+export type ProcOperationTableType = OperationTableType & {    
+    nomeGrupo: string;
+    dataHoraGrupo: string | null;
+};

@@ -5,12 +5,11 @@ import { GlobalContext } from "@/components/globalContext";
 import { NextUIProvider } from "@nextui-org/system";
 import React, { Suspense } from "react";
 import { PacmanLoader } from "react-spinners";
-import ListarGrupos from "./processar/components/listarGrupos";
-import ListarOperacoesAProcessar from "./processar/components/listarOperacoesAProcessar";
-import { ProcessarDadosChangeContextProvider } from "./processar/components/processarDadosChangeContext";
+import ListarOperacoesProcessadas from "./components/listarOperacoesProcessadas";
+import { ProcessarDadosChangeContextProvider } from "../processar/components/processarDadosChangeContext";
 
 
-export default function UePage() {
+export default function OperacoesPage() {
   const { ueSelected } = React.useContext(GlobalContext);
 
   if (!ueSelected)
@@ -23,9 +22,9 @@ export default function UePage() {
           <ProcessarDadosChangeContextProvider>
             <FiltroDataBetweenContextProvider>
               <FiltroDataBetween />
-              <div className="flex py-1">                
+              <div className="flex py-1">
                 <Suspense fallback={<PacmanLoader />}>
-                  <ListarGrupos />
+                  <ListarOperacoesProcessadas />
                 </Suspense>
               </div>
             </FiltroDataBetweenContextProvider>
