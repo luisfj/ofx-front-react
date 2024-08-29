@@ -15,6 +15,10 @@ export type UeBasicType = {
     createdUserId: number,
     createdEmail: string,
     color?: string | null;
+    administrator: boolean;
+    permissionRead: boolean;
+    permissionWrite: boolean;
+    permissionImport: boolean;
 }
 
 export type UeBasicRegisterType = {

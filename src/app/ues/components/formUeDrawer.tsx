@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchPostToApi } from "@/api/callApi";
+import { fetchPostToApi, fetchPutToApi } from "@/api/callApi";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { UeBasicType } from "@/types/basicUUType";
+import { DEFAULT_COLORS } from "@/utils/colorsConstants";
 import React from "react";
 
 export default function FormUeDrawer({
@@ -55,7 +57,7 @@ export default function FormUeDrawer({
       setSaveDisabled(true);
 
       if (objectData) {
-        const resp = await fetchPostToApi(`/v1/permission-checker/ue/${objectData.ueId}`, {
+        const resp = await fetchPutToApi(`/v1/permission-checker/ue/${objectData.ueId}`, {
           name: nome,
           color: color
         });
@@ -117,12 +119,23 @@ export default function FormUeDrawer({
                 <Label htmlFor="name" className="text-right">
                   Cor
                 </Label>
-                <Input
-                  value={color ?? ""}
-                  onChange={(event) => setColor(event.target.value)}
-                  placeholder="Cor"
-                  className="col-span-3"
-                />
+
+                <Select
+                  defaultValue={color && color !== '' ? color : null}
+                  onValueChange={(newColor) => { console.log(newColor); setColor(newColor); }}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}><div>Selecione a Cor</div></SelectItem>
+                    {DEFAULT_COLORS.map((color) => (
+                      <SelectItem value={color}>
+                        <div className={color + " w-[220px] h-6"} />
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
             </div>
