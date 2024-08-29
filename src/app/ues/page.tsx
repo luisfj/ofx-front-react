@@ -19,7 +19,10 @@ export default function SelectUePages() {
     if (!refreshData)
       return;
     fetchFromApi('/v1/permission-checker/ue/all')
-      .then(u => setUes(u));
+      .then(u => {
+        setUes(u);
+console.warn(u);
+      });
     setRefreshData(false);
   }, [, refreshData]);
 
@@ -39,7 +42,7 @@ export default function SelectUePages() {
       <Button variant={"secondary"} onClick={() => { setSelected(undefined); setOpenForm(true); }}>
         <PlusIcon className="small" /> Nova UE
       </Button>
-      <div className="w-full grid grid-cols-3">
+      <div className="w-full grid grid-cols-3 mt-2">
         {ues.map((ue, index) => (
           <UeCard key={index} ue={ue} userEmail={session?.user.email} setEditUe={setSelected} />
         ))}
