@@ -12,7 +12,7 @@ import { CircleCheckBigIcon, ReplyIcon, TrashIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export type ConfirmDialogType = {
-  idOperacao: number;
+  idConvite: number;
   onClick: React.Dispatch<number>;
   tipo: "REMOVE" | "DELETE" | "MOVE" | "CONFIRM";
   message?: string;
@@ -30,8 +30,8 @@ export default function ConfirmDialog({
   const [idExcluir, setIdExcluir] = useState(0);
 
   useEffect(() => {
-    if (dataConfirm.idOperacao > 0) {
-      setIdExcluir(dataConfirm.idOperacao);
+    if (dataConfirm.idConvite > 0) {
+      setIdExcluir(dataConfirm.idConvite);
       setMessage(
         dataConfirm.message
           ? dataConfirm.message
@@ -41,7 +41,7 @@ export default function ConfirmDialog({
       );
       setOpen(true);
       setDataConfirm({
-        idOperacao: 0,
+        idConvite: 0,
         onClick: dataConfirm.onClick,
         tipo: dataConfirm.tipo,
       });

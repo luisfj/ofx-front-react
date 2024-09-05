@@ -218,7 +218,7 @@ export default function TableOperations({
     React.useContext(ProcessarDadosChangeContext);
 
   const confirDialogDataBasic: ConfirmDialogType = {
-    idOperacao: 0,
+    idConvite: 0,
     onClick: () => { },
     tipo: "CONFIRM",
   };
@@ -253,7 +253,7 @@ export default function TableOperations({
 
   function confirmaExcluirOperacao(dataRemove: LinkRemoveType) {
     setDataConfirmDialog({
-      idOperacao: dataRemove.id,
+      idConvite: dataRemove.id,
       onClick: excluirOperacaoDefinitivamente,
       tipo: "DELETE",
     });
@@ -296,7 +296,7 @@ export default function TableOperations({
     const grupoSelecionado = selectedGrupos[0];
 
     setDataConfirmDialog({
-      idOperacao: grupoSelecionado.id,
+      idConvite: grupoSelecionado.id,
       tipo: "CONFIRM",
       message: `Confirma adicionar as operações selecionadas ao grupo '${grupoSelecionado.memo}'?`,
       onClick: async (idGrupo) => {
@@ -469,7 +469,9 @@ export default function TableOperations({
           </ContextMenuItem>
           <ContextMenuItem
             onClick={() => {
-              const desc = table.getSelectedRowModel().rows[0].original.memo;
+              let desc = table.getSelectedRowModel().rows[0].original.refNum;
+              if(!desc || desc === '')
+                desc = table.getSelectedRowModel().rows[0].original.memo;
               const dtHora = table.getSelectedRowModel().rows[0].original.dataHora;
               console.log(dtHora)
               setDefaultValuesNewGroup({
