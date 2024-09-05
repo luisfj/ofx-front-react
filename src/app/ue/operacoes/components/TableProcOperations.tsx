@@ -251,7 +251,7 @@ export default function TableProcOperations({
     React.useContext(ProcessarDadosChangeContext);
 
   const confirDialogDataBasic: ConfirmDialogType = {
-    idOperacao: 0,
+    idConvite: 0,
     onClick: () => { },
     tipo: "CONFIRM",
   };
@@ -279,7 +279,7 @@ export default function TableProcOperations({
 
   function confirmaExcluirOperacao(dataRemove: LinkRemoveType) {
     setDataConfirmDialog({
-      idOperacao: dataRemove.id,
+      idConvite: dataRemove.id,
       onClick: excluirOperacaoDefinitivamente,
       tipo: "DELETE",
     });

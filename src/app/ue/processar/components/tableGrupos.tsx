@@ -223,7 +223,7 @@ export default function TableGrupos({
   const [idOperacaoEdit, setIdOperacaoEdit] = React.useState(0);
 
   const confirDialogDataBasic: ConfirmDialogType = {
-    idOperacao: 0,
+    idConvite: 0,
     onClick: removerOperacaoDoGrupo,
     tipo: "REMOVE",
   };
@@ -260,7 +260,7 @@ export default function TableGrupos({
 
   function confirmaRemoverGrupo(idGrupo: number) {
     setDataConfirmDialog({
-      idOperacao: idGrupo,
+      idConvite: idGrupo,
       onClick: excluirGrupoDefinitivamente,
       tipo: "DELETE",
       message:
@@ -289,7 +289,7 @@ export default function TableGrupos({
 
   function confirmaRemoverOperacaoDoGrupo(dataRemove: LinkRemoveType) {
     setDataConfirmDialog({
-      idOperacao: dataRemove.id,
+      idConvite: dataRemove.id,
       onClick:
         dataRemove.tipo === "MOVER"
           ? removerOperacaoDoGrupo
