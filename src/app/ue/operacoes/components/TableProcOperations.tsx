@@ -14,17 +14,14 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { fetchDeleteToApi, fetchPostToApi } from "@/api/callApi";
+import { fetchDeleteToApi } from "@/api/callApi";
 import ConfirmDialog, { ConfirmDialogType } from "@/components/confirm-dialog";
 import { GlobalContext } from "@/components/globalContext";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuTrigger,
+  ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import {
   DropdownMenu,
@@ -44,16 +41,12 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { ProcOperationTableType } from "@/types/operationTableType";
-import { convertToDate } from "@/utils/dateUtils";
+import { LinkRemoveType } from "@/types/util/linkRemoveType";
 import { formatCurrency } from "@/utils/numberFormat";
-import { CopyIcon, CopyPlusIcon, PenIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
+import { CopyIcon, PenIcon, Trash2Icon } from "lucide-react";
 import { PacmanLoader } from "react-spinners";
-import AdicionarGrupoDrawer, { NewGroupDefaultProperties } from "../../processar/components/adicionarGrupoDrawer";
-import AdicionarOperacaoDrawer from "../../processar/components/adicionarOperacaoDrawer";
 import AtualizarOperacaoDrawer from "../../processar/components/atualizarOperacaoDrawer";
 import { ProcessarDadosChangeContext } from "../../processar/components/processarDadosChangeContext";
-import TableGruposFilters from "../../processar/components/tableGruposFilters";
-import { LinkRemoveType } from "@/types/util/linkRemoveType";
 import TableProcOperationsFilters from "./tableProcOperationsFilters";
 
 function createDefaultColumns(

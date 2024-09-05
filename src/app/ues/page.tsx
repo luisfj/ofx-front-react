@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import FormUeDrawer from "./components/formUeDrawer";
 import UeCard from "./components/ueCard";
+import MyInvites from "./components/myInvites";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function SelectUePages() {
   const { data: session } = useSession();
@@ -21,7 +23,6 @@ export default function SelectUePages() {
     fetchFromApi('/v1/permission-checker/ue/all')
       .then(u => {
         setUes(u);
-console.warn(u);
       });
     setRefreshData(false);
   }, [, refreshData]);
@@ -39,6 +40,9 @@ console.warn(u);
 
   return (
     <div className="mt-10 w-full">
+
+      <MyInvites setRefreshUeListDate={setRefreshData} />
+
       <Button variant={"secondary"} onClick={() => { setSelected(undefined); setOpenForm(true); }}>
         <PlusIcon className="small" /> Nova UE
       </Button>
