@@ -8,6 +8,7 @@ import { PacmanLoader } from "react-spinners";
 import ListarGrupos from "./processar/components/listarGrupos";
 import ListarOperacoesAProcessar from "./processar/components/listarOperacoesAProcessar";
 import { ProcessarDadosChangeContextProvider } from "./processar/components/processarDadosChangeContext";
+import { Card, CardContent } from "@/components/ui/card";
 
 
 export default function UePage() {
@@ -23,11 +24,14 @@ export default function UePage() {
           <ProcessarDadosChangeContextProvider>
             <FiltroDataBetweenContextProvider>
               <FiltroDataBetween />
-              <div className="flex py-1">                
                 <Suspense fallback={<PacmanLoader />}>
+                <Card className="mt-4">
+<CardContent>
+
                   <ListarGrupos />
+</CardContent>
+                </Card>
                 </Suspense>
-              </div>
             </FiltroDataBetweenContextProvider>
           </ProcessarDadosChangeContextProvider>
         </NextUIProvider>

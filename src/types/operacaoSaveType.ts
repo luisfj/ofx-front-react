@@ -5,3 +5,8 @@ export type OperacaoSaveType = {
   fitId: string | null;
   valor: number;
 };
+
+
+export type OperacaoSaveTypeModal = OperacaoSaveType & {
+  adicionarComGrupo?: boolean;
+};

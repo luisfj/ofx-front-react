@@ -3,10 +3,9 @@
 import { fetchPostToApi } from "@/api/callApi";
 import { GlobalContext } from "@/components/globalContext";
 import { CreateGrupoType } from "@/types/createGrupoType";
+import { DateTime } from 'luxon';
 import React, { useEffect, useState } from "react";
 import OperacaoDrawer from "./operacaoDrawer";
-import { convertToDate, formatDate } from "@/utils/dateUtils";
-import { DateTime } from 'luxon';
 
 export type NewGroupDefaultProperties = {
   descricao: string,
@@ -25,7 +24,7 @@ export default function AdicionarGrupoDrawer({
   defaultValues?: NewGroupDefaultProperties
 }) {
   const { ueSelected } = React.useContext(GlobalContext);
-  
+
   const [dataS, setDataS] = useState({
     id: 0,
     dataHora: DateTime.now().toFormat('yyyy-MM-dd'),
@@ -38,7 +37,7 @@ export default function AdicionarGrupoDrawer({
   useEffect(() => {
     if (!defaultValues)
       return;
-    dataS.dataHora = defaultValues.data;
+    dataS.dataHora = defaultValues.data!;
     dataS.memo = defaultValues.descricao;
     setDataS(dataS);
   }, [, defaultValues])
