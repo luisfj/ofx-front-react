@@ -7,6 +7,7 @@ import { formatDate } from "date-fns";
 import React, { useEffect } from "react";
 import OperacaoDrawer from "./operacaoDrawer";
 import { fetchPostToApi } from "@/api/callApi";
+import { CreateGrupoType } from "@/types/createGrupoType";
 
 export default function AdicionarOperacaoDrawer({
   idGrupo,
@@ -45,8 +46,24 @@ export default function AdicionarOperacaoDrawer({
     refNum: string | null;
     fitId: string | null;
     valor: number;
+    adicionarComGrupo?: boolean
   }) => {
     if (!obj) throw new Error("Os campos devem ser preenchidos.");
+
+    let grupoId = idEdit;
+
+    if(obj.adicionarComGrupo){
+      const objData: CreateGrupoType = {
+        dataHora: obj.dataHora,
+        memo: obj.memo,
+        ordem: 0,
+      };
+  
+      const response = await fetchPostToApi(`/v1/data/grupo/${ueSelected.id}`, objData);
+  
+      const data = await response.json();
+      grupoId = data.id;
+    }
 
     const objData: CreateOperacaoType = {
       dataHora: obj.dataHora,
@@ -54,7 +71,7 @@ export default function AdicionarOperacaoDrawer({
       refNum: obj.refNum,
       fitId: obj.fitId,
       ordem: 0,
-      idGrupo: idEdit,
+      idGrupo: grupoId,
       valor: obj.valor,
     };
 
@@ -62,6 +79,7 @@ export default function AdicionarOperacaoDrawer({
     
     const data = await response.json();
     console.log(data);
+    
     return idEdit;
   };
   return (

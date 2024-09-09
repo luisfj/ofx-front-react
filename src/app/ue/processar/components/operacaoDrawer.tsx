@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Drawer,
   DrawerClose,
@@ -21,7 +22,8 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { OperacaoReturnType } from "@/types/operacaoReturnType";
-import { OperacaoSaveType } from "@/types/operacaoSaveType";
+import { OperacaoSaveTypeModal } from "@/types/operacaoSaveType";
+import { getBackendValidDate } from "@/utils/dateUtils";
 import { INTL_CONFIG_NO_CURRENCY } from "@/utils/numberFormat";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -29,7 +31,6 @@ import { DateTime } from 'luxon';
 import React, { useContext } from "react";
 import CurrencyInput from "react-currency-input-field";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
-import { getBackendValidDate } from "@/utils/dateUtils";
 
 
 export default function OperacaoDrawer({
@@ -41,14 +42,13 @@ export default function OperacaoDrawer({
 }: {
   openDrawer: boolean;
   setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
-  saveFunc: React.Dispatch<OperacaoSaveType>;
+  saveFunc: React.Dispatch<OperacaoSaveTypeModal>;
   objectData: OperacaoReturnType;
   tipo: "OPERACAO" | "GRUPO";
 }) {
   const { setLastUpdateGrupos, setLastUpdateOperacoes } = useContext(
     ProcessarDadosChangeContext
   );
-
 
   const [date, setDate] = React.useState<DateTime | undefined>(
     objectData && objectData.dataHora
@@ -66,6 +66,8 @@ export default function OperacaoDrawer({
   );
   const [saveDisabled, setSaveDisabled] = React.useState(false);
   const [fitChanged, setFitChanged] = React.useState(false);
+  const [addComGrupo, setAddComGrupo] = React.useState(false);
+  const [continuarAdicionando, setContinuarAdicionando] = React.useState(false);
 
   const onOpenStateChange: React.Dispatch<React.SetStateAction<boolean>> = (
     state
@@ -101,6 +103,7 @@ export default function OperacaoDrawer({
         refNum: fitId,
         fitId: fitId,
         valor: valor,
+        adicionarComGrupo: addComGrupo
       });
 
       toast({
@@ -111,7 +114,16 @@ export default function OperacaoDrawer({
       if (setLastUpdateGrupos) setLastUpdateGrupos(new Date());
       if (setLastUpdateOperacoes) setLastUpdateOperacoes(new Date());
 
-      setOpenDrawer(false);
+      if (!continuarAdicionando)
+        setOpenDrawer(false);
+      else {
+        setMemo("");
+        setFitId("");
+        setValor(0);
+
+        setFitChanged(fitId !== memo);
+      }
+
     } catch (error: any) {
       toast({
         title: "Atenção!",
@@ -216,7 +228,36 @@ export default function OperacaoDrawer({
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 col-span-3" />
                 </div>
               )}
+
+              {tipo == "GRUPO" || (objectData.id && objectData.id > 0) ? (
+                <></>
+              ) : (
+                <div className="grid grid-cols-2 items-center gap-4">
+                  <Label className="text-right">Adicionar com Grupo</Label>
+
+                  <Checkbox
+                    checked={addComGrupo}
+                    onCheckedChange={(value) => setAddComGrupo(!!value)}
+                    aria-label="Adicionar com Grupo"
+                  />
+                </div>
+              )}
+
+              {objectData.id && objectData.id > 0 ? (
+                <></>
+              ) : (
+                <div className="grid grid-cols-2 items-center gap-4">
+                  <Label className="text-right">Continuar Adicionando</Label>
+
+                  <Checkbox
+                    checked={continuarAdicionando}
+                    onCheckedChange={(value) => setContinuarAdicionando(!!value)}
+                    aria-label="Adicionar com Grupo"
+                  />
+                </div>
+              )}
             </div>
+
             <DrawerFooter>
               <Button
                 type="button"

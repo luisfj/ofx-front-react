@@ -6,9 +6,8 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import FormUeDrawer from "./components/formUeDrawer";
-import UeCard from "./components/ueCard";
 import MyInvites from "./components/myInvites";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import UeCard from "./components/ueCard";
 
 export default function SelectUePages() {
   const { data: session } = useSession();
