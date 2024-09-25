@@ -6,7 +6,6 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import FormUeDrawer from "./components/formUeDrawer";
-import MyInvites from "./components/myInvites";
 import UeCard from "./components/ueCard";
 
 export default function SelectUePages() {
@@ -39,8 +38,6 @@ export default function SelectUePages() {
 
   return (
     <div className="mt-10 w-full">
-
-      <MyInvites setRefreshUeListDate={setRefreshData} />
 
       <Button variant={"secondary"} onClick={() => { setSelected(undefined); setOpenForm(true); }}>
         <PlusIcon className="small" /> Nova UE
