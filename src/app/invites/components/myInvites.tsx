@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { fetchDeleteToApi, fetchFromApi, fetchPutToApiNoBody } from "@/api/callApi";
+import { fetchFromApi, fetchPutToApiNoBody } from "@/api/callApi";
 import ConfirmDialog, { ConfirmDialogType } from "@/components/confirm-dialog";
 import GenericTable from "@/components/genericTable";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -13,9 +13,7 @@ import { createMyInvitesColumns } from "./utils/createMyInvitesColumns";
 import { getMyInvitesFilters } from "./utils/myInvitesFilters";
 
 
-export default function MyInvites(
-    {setRefreshUeListDate}:
-    {setRefreshUeListDate:React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function MyInvites() {
 
     const confirDialogDataBasic: ConfirmDialogType = {
         idConvite: 0,
@@ -40,7 +38,6 @@ export default function MyInvites(
         try {
             await fetchPutToApiNoBody(`/v1/permission-checker/ue/invite/reject/${idInvite}`);
             setDateUpdateData(new Date());
-            setRefreshUeListDate(true);
             toast({
                 title: "Sucesso!",
                 description: "Convite rejeitado",
@@ -68,7 +65,6 @@ export default function MyInvites(
         try {
             await fetchPutToApiNoBody(`/v1/permission-checker/ue/invite/confirm/${idInvite}`);
             setDateUpdateData(new Date());
-            setRefreshUeListDate(true);
             toast({
                 title: "Sucesso!",
                 description: "Convite Aceito",
@@ -109,8 +105,7 @@ export default function MyInvites(
         confirmaRejeitarConvite) as ColumnDef<UeUserInviteDetail>[];
 
     return (
-        <Card hidden={!data || data.length <= 0}
-        className="mb-5">
+        <Card className="mb-5">
             <CardHeader>Convites a Ues Pendentes</CardHeader>
             <CardContent>
                 <ConfirmDialog
