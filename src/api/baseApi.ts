@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 
-export const baseUrl = process.env.NODE_ENV === 'production' ? 'https://luisjohann.dev/ofx-api' : 'http://localhost:8080/api';
+export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function AUTH_FETCHER(url: string) {
     const { data: session } = useSession();
