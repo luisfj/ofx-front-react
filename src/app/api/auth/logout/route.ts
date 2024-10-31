@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { setCookie } from '@/lib/cookies';
+import { url } from 'inspector';
 
 export async function POST(request: NextRequest) {
   const res = NextResponse.json({ message: 'Logged out' });
@@ -17,11 +18,11 @@ export async function POST(request: NextRequest) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: new URLSearchParams({
-      client_id: process.env.KEYCLOAK_CLIENT_ID!,
-      client_secret: process.env.KEYCLOAK_CLIENT_SECRET!,
-      refresh_token: refreshToken!,
-    }),
+    body: new URLSearchParams([      
+      ['client_id', process.env.KEYCLOAK_CLIENT_ID!],
+      ['client_secret', process.env.KEYCLOAK_CLIENT_SECRET!],
+      ['refresh_token', `${refreshToken!}`],
+    ]),
   });
 
   return res;

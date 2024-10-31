@@ -59,14 +59,14 @@ export default function FormUeDrawer({
       if (objectData) {
         const resp = await fetchPutToApi(`/v1/permission-checker/ue/${objectData.ueId}`, {
           name: nome,
-          color: color
+          color: color == "" ? null : color
         });
         if (resp.status !== 200)
           throw new Error('Erro ao salvar UE');
       } else {
         const resp = await fetchPostToApi('/v1/permission-checker/ue', {
           name: nome,
-          color: color
+          color: color == "" ? null : color
         });
         if (resp.status !== 201)
           throw new Error('Erro ao salvar UE');
@@ -121,16 +121,16 @@ export default function FormUeDrawer({
                 </Label>
 
                 <Select
-                  defaultValue={color && color !== '' ? color : null}
+                  defaultValue={color && color !== '' ? color : undefined}
                   onValueChange={(newColor) => { console.log(newColor); setColor(newColor); }}
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={null}><div>Selecione a Cor</div></SelectItem>
+                    <SelectItem key={null} value={''}><div>Selecione a Cor</div></SelectItem>
                     {DEFAULT_COLORS.map((color) => (
-                      <SelectItem value={color}>
+                      <SelectItem key={color} value={color}>
                         <div className={color + " w-[220px] h-6"} />
                       </SelectItem>
                     ))}
