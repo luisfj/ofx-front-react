@@ -12,11 +12,12 @@ declare module 'next-auth' {
       preferred_username: string;
       given_name: string;
       family_name: string;
-      email: string;
+      email: string;      
       id: string;
       org_name?: string;
       telephone?: string;
     };
+    idToken: string;
     error: string;
   }
   /**
