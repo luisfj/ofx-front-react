@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { setCookie } from '@/lib/cookies';
 
 export async function POST(request: NextRequest) {
+  console.warn('------POSTTT DO LOGINNNNN--------');
   const { email, password } = await request.json();
 
   const keycloakTokenEndpoint = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`;

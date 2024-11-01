@@ -3,6 +3,7 @@ import { setCookie } from '@/lib/cookies';
 import { url } from 'inspector';
 
 export async function POST(request: NextRequest) {
+  console.warn('------POSTTT DO LOGOUTTT--------');
   const res = NextResponse.json({ message: 'Logged out' });
 
   // Remova os cookies de autenticação

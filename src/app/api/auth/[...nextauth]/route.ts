@@ -17,8 +17,8 @@ function isTokenExpired(expiresAt: number): boolean {
  * @param  {JWT} token
  */
 const refreshAccessToken = async (token: JWT) => {
+  console.warn('-----REFRESH TOKEN------');
   try {
-    console.warn('-----REFRESH TOKEN------');
 
     if (Date.now() > token.refreshTokenExpired) throw Error;
     const details = {
@@ -58,6 +58,7 @@ const refreshAccessToken = async (token: JWT) => {
         Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
     };
   } catch (error) {
+    console.error('------ERRO NO PROCESSO DE REFRESH TOKEN--------');
     console.error(error);
     return {
       ...token,
@@ -96,10 +97,12 @@ const handler = NextAuth({
     },
 
     async redirect(urlObj) {
+      console.warn('------REDIRECT CALLBACK--------', urlObj);
       return urlObj.url.startsWith(urlObj.baseUrl) ? urlObj.url : urlObj.baseUrl + urlObj.url;
     },
 
     async session({ session, token }: { session: any, token: JWT }) {
+      console.warn('------SESSION CALLBACK--------', session, token);
       if (token) {
         session.user = token.user;
         session.error = token.error;
@@ -111,18 +114,19 @@ const handler = NextAuth({
     async jwt({ token, user, account }: { token: JWT, user: any, account: any }) {
       if (account && user) {
         console.warn('------LOGIN--------');
+        console.warn('--------------', account, user);
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.accessTokenExpired = account.expires_at - 15;
         token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
         token.user = user;
-
+        console.warn('------Return token ok--------', token);
         return token;
       }
-
+      console.warn('------VERIFICA TOKEN EXPIRADO--------');
       if (!isTokenExpired(token.accessTokenExpired)) return token;
-
+      console.warn('------VAI BUSCAR O REFRESH--------');
       return refreshAccessToken(token);
     },
   },
