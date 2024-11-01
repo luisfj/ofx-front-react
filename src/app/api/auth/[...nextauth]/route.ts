@@ -74,15 +74,27 @@ const handler = NextAuth({
       name: 'Keycloak',
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      issuer: process.env.KEYCLOAK_ISSUER,
+      issuer: process.env.KEYCLOAK_ISSUER,        
       profile: (profile) => {
         return {
           ...profile,
-          id: profile.sub,
+          id: profile.sub,          
         };
       },
     }),
   ],
+  useSecureCookies:false,
+  debug:true,
+  logger:{
+    error(code, metadata) {
+      console.error("----ERRROR DEBUG------");
+      console.error(code, metadata);
+    },
+    debug(code, metadata) {
+      console.warn("----WARNNN DEBUG------");
+      console.warn(code, metadata);
+    },
+  },
   session: {
     strategy: 'jwt',
   },
