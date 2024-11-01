@@ -1,15 +1,16 @@
-import { useSession } from "next-auth/react";
+"use client"
+import { getSession } from 'next-auth/react';
 
 export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function AUTH_FETCHER(url: string) {
-    const { data: session } = useSession();
+    const session : any = await getSession();
 
     return fetch(baseUrl + url,
         {
             headers: { 
                 accept: "application/json",
-                Authorization: `Bearer ${session?.idToken}`
+                Authorization: `Bearer ${session?.access_token}`
              }
         }
     ).then((res) => res.json());

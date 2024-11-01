@@ -17,7 +17,7 @@ declare module 'next-auth' {
       org_name?: string;
       telephone?: string;
     };
-    idToken: string;
+    // idToken: string;
     error: string;
   }
   /**
