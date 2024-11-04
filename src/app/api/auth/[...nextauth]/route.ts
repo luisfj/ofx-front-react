@@ -129,10 +129,10 @@ const handler = NextAuth({
         console.warn('--------------', account, user);
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
+        // token.refreshToken = account.refresh_token;
         token.accessTokenExpired = account.expires_at - 15;
         token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
-        token.user = user;
+        // token.user = user;
         console.warn('------Return token ok--------', token);
         return token;
       }
