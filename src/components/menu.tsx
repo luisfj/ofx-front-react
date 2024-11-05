@@ -12,14 +12,15 @@ import { getSession, signIn, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "./globalContext";
+import { stat } from "fs";
 
-export default async function MenuBar() {
+export default function MenuBar() {
   const { ueSelected } = useContext(GlobalContext);
   const pathname = usePathname();
-  const session = await getSession();//useSession();
+  const { data: session, status } = useSession();
   
   const [openInvites, setOpenInvites] = useState(0);
-
+console.warn("----- menu session: ", session, status);
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn('keycloak', {
@@ -40,7 +41,7 @@ export default async function MenuBar() {
     }
   }
 
-  if (session) {
+  if (status === "authenticated") {
     return (
       <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
