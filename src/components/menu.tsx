@@ -8,15 +8,16 @@ import {
   ImportIcon,
   LayoutDashboardIcon
 } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "./globalContext";
 
-export default function MenuBar() {
+export default async function MenuBar() {
   const { ueSelected } = useContext(GlobalContext);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const session = await getSession();//useSession();
+  
   const [openInvites, setOpenInvites] = useState(0);
 
   useEffect(() => {
