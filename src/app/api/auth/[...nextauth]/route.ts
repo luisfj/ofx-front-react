@@ -50,7 +50,7 @@ const refreshAccessToken = async (token: JWT) => {
     if (!response.ok) throw refreshedTokens;
     return {
       ...token,
-      // idToken: refreshedTokens.id_token,
+      idToken: refreshedTokens.id_token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpired: Math.floor(Date.now() / 1000 + (refreshedTokens.expires_in - 15)),
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
@@ -83,7 +83,6 @@ const handler = NextAuth({
       },
     }),
   ],
-  useSecureCookies:false,
   debug:true,
   logger:{
     error(code, metadata) {
@@ -118,7 +117,7 @@ const handler = NextAuth({
       if (token) {
         session.user = token.user;
         session.error = token.error;
-        // session.accessToken = token.accessToken;
+        session.accessToken = token.accessToken;
       }
       return session;
     },
@@ -127,12 +126,12 @@ const handler = NextAuth({
       if (account && user) {
         console.warn('------LOGIN--------');
         console.warn('--------------', account, user);
-        // token.idToken = account.id_token;
+        token.idToken = account.id_token;
         token.accessToken = account.access_token;
-        // token.refreshToken = account.refresh_token;
+        token.refreshToken = account.refresh_token;
         token.accessTokenExpired = account.expires_at - 15;
         token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
-        // token.user = user;
+        token.user = user;
         console.warn('------Return token ok--------', token);
         return token;
       }
@@ -148,7 +147,7 @@ const handler = NextAuth({
       // if (token.provider === "keycloak") {
       const issuerUrl = process.env.KEYCLOAK_ISSUER;
       const logOutUrl = new URL(`${issuerUrl}/protocol/openid-connect/logout`);
-      // logOutUrl.searchParams.set("id_token_hint", token.idToken);
+      logOutUrl.searchParams.set("id_token_hint", token.idToken);
 
       await fetch(logOutUrl);
       // }

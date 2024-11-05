@@ -1,7 +1,7 @@
 "use client"
 import { getSession } from 'next-auth/react';
 
-export const baseUrl = process.env.NODE_ENV !== 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
+export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function fetchFromApi(endpoint:string) {
   const session : any = await getSession();

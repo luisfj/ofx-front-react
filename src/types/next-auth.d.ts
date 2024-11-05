@@ -17,7 +17,7 @@ declare module 'next-auth' {
       org_name?: string;
       telephone?: string;
     };
-    // idToken: string;
+    idToken: string;
     error: string;
   }
   /**
@@ -81,7 +81,7 @@ declare module 'next-auth/jwt' {
     name: string;
     email: string;
     sub: string;
-    // idToken: string;
+    idToken: string;
     accessToken: string;
     refreshToken: string;
     accessTokenExpired: number;
