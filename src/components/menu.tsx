@@ -23,7 +23,7 @@ export default function MenuBar() {
     if (session?.error === "RefreshAccessTokenError") {
       signIn('keycloak', {
         redirect: true,
-        // callbackUrl: pathname ?? '/',
+        callbackUrl: pathname ?? '/',
       }); // Force sign in to hopefully resolve error
     }
     if (session)
