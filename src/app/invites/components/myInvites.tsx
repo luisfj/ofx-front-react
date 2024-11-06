@@ -86,6 +86,7 @@ export default function MyInvites() {
     async function refreshData() {
         setIsLoading(true);
         try {
+            console.info(`[MyInvites:refreshData] - Buscando dados da api= ${process.env.BASE_BACKEND_URL}/v1/permission-checker/ue/invites/`);
             const resp: UeUserInviteDetail[] = await fetchFromApi(`/v1/permission-checker/ue/invites/`);
             setData(resp);
         } catch (ex: any) {
