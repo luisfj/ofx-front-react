@@ -4,9 +4,11 @@ import { getSession } from 'next-auth/react';
 export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function fetchFromApi(endpoint:string) {
+  console.info(`[callApi:fetchFromApi] - Buscando dados da api= ${baseUrl}${endpoint}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchFromApi] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -20,6 +22,7 @@ export async function fetchFromApi(endpoint:string) {
   });
 
   if (!response.ok) {
+    console.error(`[callApi:fetchFromApi] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
@@ -27,9 +30,11 @@ export async function fetchFromApi(endpoint:string) {
 }
 
 export async function fetchPostToApi(endpoint:string, data:any) {
+  console.info(`[callApi:fetchPostToApi] - Salvando dados na api= ${baseUrl}${endpoint} com dados: ${JSON.stringify(data)}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchPostToApi] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -43,6 +48,7 @@ export async function fetchPostToApi(endpoint:string, data:any) {
   });
 
   if (!response.ok && response.status !== 201) {
+    console.error(`[callApi:fetchPostToApi] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
@@ -50,9 +56,11 @@ export async function fetchPostToApi(endpoint:string, data:any) {
 }
 
 export async function fetchPutToApi(endpoint:string, data:any) {
+  console.info(`[callApi:fetchPutToApi] - Salvando dados na api= ${baseUrl}${endpoint} com dados: ${JSON.stringify(data)}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchPutToApi] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -66,6 +74,7 @@ export async function fetchPutToApi(endpoint:string, data:any) {
   });
 
   if (!response.ok && response.status !== 201) {
+    console.error(`[callApi:fetchPutToApi] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
@@ -73,9 +82,11 @@ export async function fetchPutToApi(endpoint:string, data:any) {
 }
 
 export async function fetchPutToApiNoBody(endpoint:string) {
+  console.info(`[callApi:fetchPutToApiNoBody] - Salvando dados na api= ${baseUrl}${endpoint} sem dados`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchPutToApiNoBody] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -87,6 +98,7 @@ export async function fetchPutToApiNoBody(endpoint:string) {
   });
 
   if (!response.ok && response.status !== 201) {
+    console.error(`[callApi:fetchPutToApiNoBody] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
@@ -94,9 +106,11 @@ export async function fetchPutToApiNoBody(endpoint:string) {
 }
 
 export async function fetchDeleteToApi(endpoint:string) {
+  console.info(`[callApi:fetchDeleteToApi] - Deletando dados na api= ${baseUrl}${endpoint}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchDeleteToApi] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -108,6 +122,7 @@ export async function fetchDeleteToApi(endpoint:string) {
   });
 
   if (!response.ok && response.status !== 201) {
+    console.error(`[callApi:fetchDeleteToApi] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
@@ -115,9 +130,11 @@ export async function fetchDeleteToApi(endpoint:string) {
 }
 
 export async function fetchUploadToApi(endpoint:string, data:FormData) {
+  console.info(`[callApi:fetchUploadToApi] - Fazendo upload de arquivo na api= ${baseUrl}${endpoint}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
+    console.error(`[callApi:fetchUploadToApi] - User not authentucated`);
     throw new Error('User not authenticated');
   }
 
@@ -131,6 +148,7 @@ export async function fetchUploadToApi(endpoint:string, data:FormData) {
   });
 
   if (!response.ok && response.status !== 200) {
+    console.error(`[callApi:fetchUploadToApi] - resposta da chamada a api não foi ok: ${response.status}: ${response.statusText}`);
     throw new Error('Network response was not ok');
   }
 
