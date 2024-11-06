@@ -16,8 +16,8 @@ function isTokenExpired(expiresAt: number): boolean {
 /**
  * @param  {JWT} token
  */
-const refreshAccessToken = async (token: JWT) => {
-  console.warn('-----REFRESH TOKEN------');
+const refreshAccessToken = async (token: JWT, account: any) => {
+  console.debug('-----REFRESH TOKEN------');
   try {
 
     if (Date.now() > token.refreshTokenExpired) throw Error;
@@ -25,7 +25,7 @@ const refreshAccessToken = async (token: JWT) => {
       client_id: process.env.KEYCLOAK_CLIENT_ID,
       client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
       grant_type: "refresh_token",
-      refresh_token: token.refreshToken,
+      refresh_token: account.refresh_token,
     };
 
     const formBody: string[] = [];
@@ -48,12 +48,14 @@ const refreshAccessToken = async (token: JWT) => {
     const refreshedTokens = await response.json();
 
     if (!response.ok) throw refreshedTokens;
+
+    account.refresh_token = refreshedTokens.refresh_token ?? account.refresh_token;
+
     return {
       ...token,
       idToken: refreshedTokens.id_token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpired: Math.floor(Date.now() / 1000 + (refreshedTokens.expires_in - 15)),
-      refreshToken: '',// refreshedTokens.refresh_token ?? token.refreshToken,
       refreshTokenExpired:
         Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
     };
@@ -74,31 +76,31 @@ const handler = NextAuth({
       name: 'Keycloak',
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      issuer: process.env.KEYCLOAK_ISSUER,        
+      issuer: process.env.KEYCLOAK_ISSUER,
       profile: (profile) => {
         return {
           ...profile,
-          id: profile.sub,          
+          id: profile.sub,
         };
       },
     }),
   ],
-  debug:true,
-  logger:{
+  // debug: true,
+  logger: {
     error(code, metadata) {
       console.error("----ERRROR DEBUG------");
       console.error(code, metadata);
     },
     debug(code, metadata) {
-      console.warn("----WARNNN DEBUG------");
-      console.warn(code, metadata);
+      console.debug("----debugNN DEBUG------");
+      console.debug(code, metadata);
     },
   },
   session: {
     strategy: 'jwt',
   },
   secret: process.env.AUTH_SECRET!,
-  useSecureCookies: false,
+  useSecureCookies: true,
   callbacks: {
     async signIn({ user, account }) {
       if (account && user) {
@@ -108,13 +110,13 @@ const handler = NextAuth({
       }
     },
 
-    async redirect(urlObj) {
-      console.warn('------REDIRECT CALLBACK--------', urlObj);
-      return urlObj.url.startsWith(urlObj.baseUrl) ? urlObj.url : urlObj.baseUrl + urlObj.url;
-    },
+    // async redirect(urlObj) {
+    //   console.debug('------REDIRECT CALLBACK--------', urlObj);
+    //   return urlObj.url.startsWith(urlObj.baseUrl) ? urlObj.url : urlObj.baseUrl + urlObj.url;
+    // },
 
     async session({ session, token }: { session: any, token: JWT }) {
-      console.warn('------SESSION CALLBACK--------', session, token);
+      console.debug('------SESSION CALLBACK--------', session, token);
       if (token) {
         session.user = token.user;
         session.error = token.error;
@@ -125,26 +127,25 @@ const handler = NextAuth({
 
     async jwt({ token, user, account }: { token: JWT, user: any, account: any }) {
       if (account && user) {
-        console.warn('------LOGIN--------');
-        console.warn('--------------', token, account, user);
+        console.debug('------LOGIN--------');
+        console.debug('--------------', token, account, user);
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
-        // token.refreshToken = account.refresh_token;
         token.accessTokenExpired = account.expires_at - 15;
         token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
-        // token.user = user;
-        console.warn('------Return token ok--------', token);
+        token.user = user;
+        console.debug('------Return token ok--------', token);
         return token;
       }
-      console.warn('------VERIFICA TOKEN EXPIRADO--------');
+      console.debug('------VERIFICA TOKEN EXPIRADO--------');
       if (!isTokenExpired(token.accessTokenExpired)) return token;
-      console.warn('------VAI BUSCAR O REFRESH--------');
-      return refreshAccessToken(token);
+      console.debug('------VAI BUSCAR O REFRESH--------');
+      return refreshAccessToken(token, account);
     },
   },
   events: {
     async signOut({ token }: { token: JWT }) {
-      console.warn("-----------SIGNOUT-------------");
+      console.debug("-----------SIGNOUT-------------");
       // if (token.provider === "keycloak") {
       const issuerUrl = process.env.KEYCLOAK_ISSUER;
       const logOutUrl = new URL(`${issuerUrl}/protocol/openid-connect/logout`);

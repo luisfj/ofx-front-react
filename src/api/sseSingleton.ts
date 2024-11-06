@@ -1,3 +1,5 @@
+import { baseUrl } from "./baseApi";
+
 class SseSingleton {
     private static instance: SseSingleton;
     private sse: EventSource | null = null;
@@ -13,7 +15,7 @@ class SseSingleton {
 
     public connect(accessToken: string): EventSource {
         if (!this.sse) {
-            this.sse = new EventSource(`http://localhost:8080/api/v1/sse/subscribe?token=${accessToken}`);
+            this.sse = new EventSource(`${baseUrl}/v1/sse/subscribe?token=${accessToken}`);
             this.sse.onmessage = this.handleMessage;
             this.sse.onerror = (ev: Event) => this.handleError(ev, accessToken);
         }
@@ -28,7 +30,7 @@ class SseSingleton {
     private handleError(event: Event, accessToken: String): void {
         console.error('Sse error:', event);
         setTimeout(() => {
-            this.sse = new EventSource(`http://localhost:8080/api/v1/sse/subscribe?token=${accessToken}`);
+            this.sse = new EventSource(`${baseUrl}/v1/sse/subscribe?token=${accessToken}`);
         }, 1000);
     }
 
