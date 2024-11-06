@@ -5,7 +5,7 @@ import { env } from 'process';
 export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function fetchFromApi(endpoint:string) {
-  console.info(`[callApi:fetchFromApi] - Buscando dados da api= ${baseUrl}${endpoint}`);
+  console.info(`[callApi:fetchFromApi] - Buscando dados da api= ${baseUrl}${endpoint}${process.env['NEXT_PUBLIC_BASE_BACKEND_URL']}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
