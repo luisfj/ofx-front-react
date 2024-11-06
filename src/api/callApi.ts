@@ -4,7 +4,7 @@ import { getSession } from 'next-auth/react';
 export const baseUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_BACKEND_URL : 'http://localhost:8080/api';
 
 export async function fetchFromApi(endpoint:string) {
-  console.info(`[callApi:fetchFromApi] - Buscando dados da api= ${baseUrl}${endpoint}`);
+  console.info(`[callApi:fetchFromApi] - Buscando dados da api= ${baseUrl}${endpoint} /// ${process.env.BASE_BACKEND_URL}`);
   const session : any = await getSession();
 
   if (!session || !session.accessToken) {
