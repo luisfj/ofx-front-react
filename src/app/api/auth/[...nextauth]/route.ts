@@ -53,7 +53,7 @@ const refreshAccessToken = async (token: JWT) => {
       idToken: refreshedTokens.id_token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpired: Math.floor(Date.now() / 1000 + (refreshedTokens.expires_in - 15)),
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+      refreshToken: '',// refreshedTokens.refresh_token ?? token.refreshToken,
       refreshTokenExpired:
         Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
     };
@@ -126,13 +126,13 @@ const handler = NextAuth({
     async jwt({ token, user, account }: { token: JWT, user: any, account: any }) {
       if (account && user) {
         console.warn('------LOGIN--------');
-        console.warn('--------------', account, user);
+        console.warn('--------------', token, account, user);
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
+        // token.refreshToken = account.refresh_token;
         token.accessTokenExpired = account.expires_at - 15;
         token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
-        token.user = user;
+        // token.user = user;
         console.warn('------Return token ok--------', token);
         return token;
       }
