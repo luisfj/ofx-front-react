@@ -98,7 +98,7 @@ const handler = NextAuth({
     strategy: 'jwt',
   },
   secret: process.env.AUTH_SECRET!,
-  useSecureCookies: true,
+  useSecureCookies: false,
   callbacks: {
     async signIn({ user, account }) {
       if (account && user) {
