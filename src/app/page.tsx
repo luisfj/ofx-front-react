@@ -10,7 +10,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         {/* <main className="min-h-screen w-full items-center justify-between p-24"> */}
-        <Link href={"/1/1/processar"}>Processar Dados</Link>
+        <Link href={"/ues"}>Acessar o sistema</Link>
         <div className="gap-5 columns-2">
           {/* <LinksTable operations={operacoes}></LinksTable>
           <LinksTable operations={grupos}></LinksTable> */}
