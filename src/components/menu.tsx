@@ -20,13 +20,13 @@ export default function MenuBar() {
   const [openInvites, setOpenInvites] = useState(0);
 
   useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
+    if (pathname !== '/' && session?.error === "RefreshAccessTokenError") {
       signIn('keycloak', {
         redirect: true,
         callbackUrl: pathname ?? '/',
       }); // Force sign in to hopefully resolve error
     }
-    if (session)
+    if (pathname !== '/' && session)
       refreshMenuInfo();
   }, [session]);
 
@@ -39,7 +39,7 @@ export default function MenuBar() {
     }
   }
 
-  if (session) {
+  if (pathname !== '/' && session) {
     return (
       <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
@@ -132,12 +132,7 @@ export default function MenuBar() {
       </aside>
     )
   } else {
-    return (<div>
-      Not signed in <br />
-      <button onClick={() => signIn("keycloak", {
-        redirect: false,
-        callbackUrl: '/ues'
-      })}>Sign in</button>
-    </div>);
+    return (<>      
+    </>);
   }
 }
