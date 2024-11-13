@@ -1,6 +1,7 @@
 import MenuBar from "@/components/menu";
 import TopBar from "@/components/topBar";
 import SseConnectComponent from "../messages/components/sseConnect";
+import './../globals.css';
 
 export default function RootLayout({
   children,

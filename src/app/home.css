@@ -1,0 +1,73 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  background-color: #007bff;
+}
+
+.navbar-brand,
+.nav-link {
+  color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffcc00 !important;
+}
+
+.hero-section {
+  /* --background: url('https://via.placeholder.com/1500x800') no-repeat center center; */
+  background: url('/static/imgs/banner2.png') no-repeat center center;
+  background-size: cover;
+  padding: 100px 0;
+  color: white;
+  text-align: center;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.feature-icons {
+  font-size: 2.5rem;
+  color: #007bff;
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.footer {
+  background-color: #343a40;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+}
