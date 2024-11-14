@@ -8,8 +8,8 @@ export function middleware(request: NextRequest) {
     if (pathname !== '/' 
         && !request.cookies.has("next-auth.session-token") 
         && !request.cookies.has("next-auth.session-token.1")
-        && !request.cookies.has("Secure-next-auth.session-token.0")
-        && !request.cookies.has("Secure-next-auth.session-token.1")
+        && !request.cookies.has("__Secure-next-auth.session-token.0")
+        && !request.cookies.has("__Secure-next-auth.session-token.1")
     ) {
         console.warn('-----MIDDLEWARE Block, no authenticate------' + pathname)
         return NextResponse.redirect(new URL('/api/auth/signin', request.url));
