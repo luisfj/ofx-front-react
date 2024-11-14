@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
     console.info('-----MIDDLEWARE------' + pathname)
     if (pathname !== '/' && !request.cookies.has("next-auth.session-token") && !request.cookies.has('next-auth.session-token.1')) {
         console.warn('-----MIDDLEWARE Block, no authenticate------' + pathname)
-        return NextResponse.redirect(new URL('/api/auth/signin', pathname));
+        return NextResponse.redirect(new URL('/api/auth/signin', request.url));
     }
     // Clone the request headers and set a new header `x-path`
     const requestHeaders = new Headers(request.headers)
