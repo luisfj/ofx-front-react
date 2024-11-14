@@ -5,7 +5,12 @@ export { default } from "next-auth/middleware";
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     console.info('-----MIDDLEWARE------' + pathname)
-    if (pathname !== '/' && !request.cookies.has("next-auth.session-token") && !request.cookies.has('next-auth.session-token.1')) {
+    if (pathname !== '/' 
+        && !request.cookies.has("next-auth.session-token") 
+        && !request.cookies.has("next-auth.session-token.1")
+        && !request.cookies.has("Secure-next-auth.session-token.0")
+        && !request.cookies.has("Secure-next-auth.session-token.1")
+    ) {
         console.warn('-----MIDDLEWARE Block, no authenticate------' + pathname)
         return NextResponse.redirect(new URL('/api/auth/signin', request.url));
     }
