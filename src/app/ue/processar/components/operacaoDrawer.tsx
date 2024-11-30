@@ -174,8 +174,7 @@ export default function OperacaoDrawer({
                       mode="single"
                       locale={ptBR}
                       selected={date?.toJSDate()}
-                      onSelect={(date) => setDate(date ? DateTime.fromJSDate(date) : undefined)}
-                      initialFocus
+                      onSelect={(date) => setDate(date ? DateTime.fromJSDate(date) : undefined)}                      
                     />
                   </PopoverContent>
                 </Popover>
