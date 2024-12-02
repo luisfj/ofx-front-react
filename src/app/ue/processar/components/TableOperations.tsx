@@ -10,7 +10,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 import * as React from "react";
 
@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { OperationTableType } from "@/types/operationTableType";
+import { LinkRemoveType } from "@/types/util/linkRemoveType";
 import { convertToDate } from "@/utils/dateUtils";
 import { formatCurrency } from "@/utils/numberFormat";
 import { CopyIcon, CopyPlusIcon, PenIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
@@ -53,7 +54,6 @@ import AdicionarOperacaoDrawer from "./adicionarOperacaoDrawer";
 import AtualizarOperacaoDrawer from "./atualizarOperacaoDrawer";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableGruposFilters from "./tableGruposFilters";
-import { LinkRemoveType } from "@/types/util/linkRemoveType";
 
 function createDefaultColumns(
   setIdEditOperacao: React.Dispatch<React.SetStateAction<number>>,
@@ -203,7 +203,6 @@ function createDefaultColumns(
   ];
   return defaultColumns;
 }
-
 
 export default function TableOperations({
   operations,
@@ -470,7 +469,7 @@ export default function TableOperations({
           <ContextMenuItem
             onClick={() => {
               let desc = table.getSelectedRowModel().rows[0].original.refNum;
-              if(!desc || desc === '')
+              if (!desc || desc === '')
                 desc = table.getSelectedRowModel().rows[0].original.memo;
               const dtHora = table.getSelectedRowModel().rows[0].original.dataHora;
               console.log(dtHora)

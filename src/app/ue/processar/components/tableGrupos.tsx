@@ -23,11 +23,14 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { PenIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { jsPDF } from 'jspdf'; //or use your library of choice here
+import autoTable from 'jspdf-autotable';
+import { ChevronDownSquareIcon, FolderOutputIcon, PenIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import React, { useContext } from "react";
 import AdicionarGrupoDrawer from "./adicionarGrupoDrawer";
 import AdicionarOperacaoDrawer from "./adicionarOperacaoDrawer";
@@ -35,6 +38,52 @@ import AtualizarGrupoDrawer from "./atualizarGrupoDrawer";
 import AtualizarOperacaoDrawer from "./atualizarOperacaoDrawer";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableGruposFilters from "./tableGruposFilters";
+
+const headerNames: { [key: string]: string } = {
+  "memo": 'Descrição',
+  "tipo": 'Tipo',
+  "refNum": 'Ref Num',
+  "fitId": 'Fit Id',
+  "nomeConta": 'Conta',
+  "dataHora": 'Data',
+  "valor": 'Valor',
+}
+
+const handleExportRows = (rows: Row<OperationTableType>[], headers: ColumnDef<OperationTableType>[]) => {
+  const doc = new jsPDF();
+
+  const tableHeaderKeys = headers
+    .map((c) => c.id ? c.id : '')
+    .filter(c => c !== 'select' && c !== 'actions' && c !== '');
+
+  const tableHeaders = tableHeaderKeys
+    .map(c => headerNames[c] ?? '');
+
+  const convertValorFormat = (key: string, value: any) => {
+    if (key === 'valor')
+      return formatCurrency(value)
+
+    return value
+  }
+
+  const convertRow = (row: Row<OperationTableType>) => {
+    const original: { [key: string]: string | number | null | any } = row.original;
+    return tableHeaderKeys.map(k => convertValorFormat(k, original[k]));
+  }
+
+  // const tableData = rows.map((row) => {console.debug(row); return Object.values(tableHeaderKeys.map(c => row.original[c]))});
+  const tableDatac = rows.map(convertRow);
+  console.debug(tableDatac);
+
+
+  autoTable(doc, {
+    head: [tableHeaders],
+    body: tableDatac,
+  });
+
+
+  doc.save('ofx-groups-pdf.pdf');
+};
 
 function createTableColumns(
   setIdEdit: React.Dispatch<React.SetStateAction<number>>,
@@ -143,7 +192,7 @@ function createTableColumns(
       id: "actions",
       enableHiding: false,
       enableSorting: false,
-      cell: ({ row }) => {
+      cell: ({ table, row }) => {
         const grupoId = row.original.id;
 
         return (
@@ -178,6 +227,14 @@ function createTableColumns(
                 }}
               >
                 <PlusIcon className="h-4 w-8" /> Nova Operação
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  handleExportRows(table.getFilteredRowModel().rows, defaultColumns);
+                }}
+              >
+                <ChevronDownSquareIcon className="h-4 w-8" /> Exportar dados
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -363,52 +420,59 @@ export default function TableGrupos({
     return <div>Deve selecionar o usuário e a ue para continuar</div>;
 
   return (
-    
-      <div className="w-full sm:p-4">
-        <ConfirmDialog
-          dataConfirm={dataConfirmDialog}
-          setDataConfirm={setDataConfirmDialog}
-        />
 
-        <AdicionarGrupoDrawer
-          setOpenDrawer={setOpenDrawerAdicionarGrupo}
-          openDrawer={openDrawerAdicionarGrupo}
-          setIdGrupoAdicionado={null}
-        />
-        <AtualizarGrupoDrawer idGrupo={idEdit} setIdGrupo={setIdEdit} />
-        <AdicionarOperacaoDrawer
-          setIdGrupo={setIdGrupoAddOperacao}
-          idGrupo={idGrupoAddOperacao}
-        />
-        <AtualizarOperacaoDrawer
-          idOperacao={idOperacaoEdit}
-          setIdOperacao={setIdOperacaoEdit}
-        />
-        <Button
-          variant={"secondary"}
-          onClick={() => setOpenDrawerAdicionarGrupo(true)}
-        >
-          <PlusIcon className="small" /> Novo Grupo
-        </Button>
-        <div className="flex items-center py-4">
-          <TableGruposFilters table={table} />
-        </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="flex-1 text-sm text-muted-foreground text-right">
-            <div>VALOR: {totalSelected}</div>
-          </div>
-        </div>
-        <LinksTable
-          table={table}
-          isLoading={isLoading}
-          removerOperacaoDoGrupo={confirmaRemoverOperacaoDoGrupo}
-          setIdEditOperacao={setIdOperacaoEdit}
-        ></LinksTable>
+    <div className="w-full sm:p-4">
+      <ConfirmDialog
+        dataConfirm={dataConfirmDialog}
+        setDataConfirm={setDataConfirmDialog}
+      />
+
+      <AdicionarGrupoDrawer
+        setOpenDrawer={setOpenDrawerAdicionarGrupo}
+        openDrawer={openDrawerAdicionarGrupo}
+        setIdGrupoAdicionado={null}
+      />
+      <AtualizarGrupoDrawer idGrupo={idEdit} setIdGrupo={setIdEdit} />
+      <AdicionarOperacaoDrawer
+        setIdGrupo={setIdGrupoAddOperacao}
+        idGrupo={idGrupoAddOperacao}
+      />
+      <AtualizarOperacaoDrawer
+        idOperacao={idOperacaoEdit}
+        setIdOperacao={setIdOperacaoEdit}
+      />
+      <Button
+        variant={"secondary"}
+        onClick={() => setOpenDrawerAdicionarGrupo(true)}
+      >
+        <PlusIcon className="small" /> Novo Grupo
+      </Button>
+      <Button
+        variant={"default"}
+        onClick={() => handleExportRows(table.getFilteredRowModel().rows, table.getVisibleFlatColumns())}
+      >
+        <FolderOutputIcon className="small" /> Exportar PDF
+      </Button>
+      <div className="flex items-center py-4">
+        <TableGruposFilters table={table} />
       </div>
-    
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="flex-1 text-sm text-muted-foreground text-right">
+          <div>VALOR: {totalSelected}</div>
+        </div>
+      </div>
+
+      <LinksTable
+        table={table}
+        isLoading={isLoading}
+        removerOperacaoDoGrupo={confirmaRemoverOperacaoDoGrupo}
+        setIdEditOperacao={setIdOperacaoEdit}
+      ></LinksTable>
+    </div>
+
   );
 }
