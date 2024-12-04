@@ -30,7 +30,7 @@ import {
 } from "@tanstack/react-table";
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
-import { ChevronDownSquareIcon, FolderOutputIcon, PenIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { FolderOutputIcon, PenIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import React, { useContext } from "react";
 import AdicionarGrupoDrawer from "./adicionarGrupoDrawer";
 import AdicionarOperacaoDrawer from "./adicionarOperacaoDrawer";
@@ -39,46 +39,53 @@ import AtualizarOperacaoDrawer from "./atualizarOperacaoDrawer";
 import { ProcessarDadosChangeContext } from "./processarDadosChangeContext";
 import TableGruposFilters from "./tableGruposFilters";
 
-const headerNames: { [key: string]: string } = {
-  "memo": 'Descrição',
-  "tipo": 'Tipo',
-  "refNum": 'Ref Num',
-  "fitId": 'Fit Id',
-  "nomeConta": 'Conta',
-  "dataHora": 'Data',
-  "valor": 'Valor',
-}
-
-const handleExportRows = (rows: Row<OperationTableType>[], headers: ColumnDef<OperationTableType>[]) => {
+const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
   const doc = new jsPDF();
+  doc.setFontSize(20);
+  const ySize = 230
+  const textLength = nomeUe.length
+  doc.text(nomeUe, (ySize - textLength) / 2, 20, { align: 'center' });
 
-  const tableHeaderKeys = headers
-    .map((c) => c.id ? c.id : '')
-    .filter(c => c !== 'select' && c !== 'actions' && c !== '');
+  const tableHeaders = ['Descrição', 'Data', 'Débito', 'Crédito'];
 
-  const tableHeaders = tableHeaderKeys
-    .map(c => headerNames[c] ?? '');
-
-  const convertValorFormat = (key: string, value: any) => {
-    if (key === 'valor')
-      return formatCurrency(value)
-
-    return value
-  }
+  const convertValorFormat = (value: any) => value ? formatCurrency(value) : value
 
   const convertRow = (row: Row<OperationTableType>) => {
     const original: { [key: string]: string | number | null | any } = row.original;
-    return tableHeaderKeys.map(k => convertValorFormat(k, original[k]));
+    let valorDebito = undefined
+    let valorCredito = undefined
+
+    original.valor < 0 && (valorDebito = original.valor) || (valorCredito = original.valor)
+
+    return [original.memo, original.dataHora, convertValorFormat(valorDebito), convertValorFormat(valorCredito)];
   }
 
-  // const tableData = rows.map((row) => {console.debug(row); return Object.values(tableHeaderKeys.map(c => row.original[c]))});
   const tableDatac = rows.map(convertRow);
-  console.debug(tableDatac);
 
+  const mapValores = rows.map(r => r.original.valor);
+  const totalDebitos = mapValores.filter(valor => valor && valor < 0).reduce((v1, v2) => v1! + v2!, 0)
+  const totalCreditos = mapValores.filter(valor => valor && valor > 0).reduce((v1, v2) => v1! + v2!, 0)
+  const resultadoTotal = mapValores.filter(valor => valor).reduce((v1, v2) => v1! + v2!, 0)
+
+  const tableFootData: any[][] = [
+    ['', 'TOTAL', convertValorFormat(totalDebitos), convertValorFormat(totalCreditos)],
+    ['', '', 'RESULTADO', convertValorFormat(resultadoTotal)]
+  ]
 
   autoTable(doc, {
+    startY: 25,
     head: [tableHeaders],
     body: tableDatac,
+    showFoot: "lastPage",
+    foot: tableFootData,
+    footStyles: { fontSize: 10, fillColor: undefined, textColor: 'black', halign: 'right' },
+    willDrawCell: (cell) => {
+      console.log(cell)
+      if (cell.column.index === 1)
+        cell.cell.styles.halign = cell.section !== 'foot' ? 'center' : 'right'
+      else if (cell.column.index >= 2)
+        cell.cell.styles.halign = 'right'
+    }
   });
 
 
@@ -227,14 +234,6 @@ function createTableColumns(
                 }}
               >
                 <PlusIcon className="h-4 w-8" /> Nova Operação
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  handleExportRows(table.getFilteredRowModel().rows, defaultColumns);
-                }}
-              >
-                <ChevronDownSquareIcon className="h-4 w-8" /> Exportar dados
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -449,7 +448,7 @@ export default function TableGrupos({
       </Button>
       <Button
         variant={"default"}
-        onClick={() => handleExportRows(table.getFilteredRowModel().rows, table.getVisibleFlatColumns())}
+        onClick={() => handleExportRows(table.getFilteredRowModel().rows, ueSelected.nome)}
       >
         <FolderOutputIcon className="small" /> Exportar PDF
       </Button>
