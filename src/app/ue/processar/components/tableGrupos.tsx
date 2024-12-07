@@ -48,7 +48,7 @@ const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
 
   const tableHeaders = ['Descrição', 'Data', 'Débito', 'Crédito'];
 
-  const convertValorFormat = (value: any) => value ? formatCurrency(value) : value
+  const convertValorFormat = (value: any) => value ? formatCurrency(Number(value.toFixed(2))) : value
 
   const convertRow = (row: Row<OperationTableType>) => {
     const original: { [key: string]: string | number | null | any } = row.original;
@@ -63,13 +63,9 @@ const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
   const tableDatac = rows.map(convertRow);
 
   const mapValores = rows.map(r => r.original.valor);
-  rows.forEach(r => console.log(r.original.valor))
   const totalDebitos = mapValores.filter(valor => valor && valor < 0).reduce((v1, v2) => v1! + v2!, 0)
   const totalCreditos = mapValores.filter(valor => valor && valor > 0).reduce((v1, v2) => v1! + v2!, 0)
-  console.log('TOTAIS: ', totalCreditos, totalDebitos)
   const resultadoTotal = (totalDebitos ?? 0) + (totalCreditos ?? 0)
-
-
 
   const tableFootData: any[][] = [
     ['', 'TOTAL', convertValorFormat(totalDebitos), convertValorFormat(totalCreditos)],
@@ -84,7 +80,6 @@ const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
     foot: tableFootData,
     footStyles: { fontSize: 10, fillColor: undefined, textColor: 'black', halign: 'right' },
     willDrawCell: (cell) => {
-      console.log(cell)
       if (cell.column.index === 1)
         cell.cell.styles.halign = cell.section !== 'foot' ? 'center' : 'right'
       else if (cell.column.index >= 2)
