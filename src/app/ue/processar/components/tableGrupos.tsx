@@ -304,7 +304,7 @@ export default function TableGrupos({
           .rows.map((sel) => sel.original.valor)
           .reduce((p, c) => sum(p, c))
         : 0;
-    setTotalSelected(formatCurrency(totalSel));
+    setTotalSelected(formatCurrency(totalSel ? Number(totalSel.toFixed(2)) : 0));
     if (setSelectedGrupos)
       setSelectedGrupos(
         table.getSelectedRowModel().rows.length > 0
