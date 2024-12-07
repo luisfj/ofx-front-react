@@ -65,7 +65,9 @@ const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
   const mapValores = rows.map(r => r.original.valor);
   const totalDebitos = mapValores.filter(valor => valor && valor < 0).reduce((v1, v2) => v1! + v2!, 0)
   const totalCreditos = mapValores.filter(valor => valor && valor > 0).reduce((v1, v2) => v1! + v2!, 0)
-  const resultadoTotal = mapValores.filter(valor => valor).reduce((v1, v2) => v1! + v2!, 0)
+  const resultadoTotal = (totalDebitos ?? 0) + (totalCreditos ?? 0)
+
+
 
   const tableFootData: any[][] = [
     ['', 'TOTAL', convertValorFormat(totalDebitos), convertValorFormat(totalCreditos)],
