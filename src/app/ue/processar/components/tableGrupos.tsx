@@ -63,8 +63,10 @@ const handleExportRows = (rows: Row<OperationTableType>[], nomeUe: string) => {
   const tableDatac = rows.map(convertRow);
 
   const mapValores = rows.map(r => r.original.valor);
+  rows.forEach(r => console.log(r.original.valor))
   const totalDebitos = mapValores.filter(valor => valor && valor < 0).reduce((v1, v2) => v1! + v2!, 0)
   const totalCreditos = mapValores.filter(valor => valor && valor > 0).reduce((v1, v2) => v1! + v2!, 0)
+  console.log('TOTAIS: ', totalCreditos, totalDebitos)
   const resultadoTotal = (totalDebitos ?? 0) + (totalCreditos ?? 0)
 
 
