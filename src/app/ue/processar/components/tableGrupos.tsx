@@ -447,7 +447,7 @@ export default function TableGrupos({
       </Button>
       <Button
         variant={"default"}
-        onClick={() => handleExportRows(table.getFilteredRowModel().rows, ueSelected.nome)}
+        onClick={() => handleExportRows(table.getRowModel().rows, ueSelected.nome)}
       >
         <FolderOutputIcon className="small" /> Exportar PDF
       </Button>
